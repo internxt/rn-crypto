@@ -8,14 +8,15 @@
 
 /* Begin PBXBuildFile section */
 		3192992EFB67FE51FF701BA0 /* Pods_RnCrypto_RnCryptoTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F1A39B82188A77889B00269 /* Pods_RnCrypto_RnCryptoTests.framework */; };
-		E136EF3728456C150002609B /* AES.swift in Sources */ = {isa = PBXBuildFile; fileRef = E136EF3428456AF30002609B /* AES.swift */; };
 		E136EF3B28456DFE0002609B /* AesCipher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E136EF3A28456DFE0002609B /* AesCipher.swift */; };
-		E1955FC82844A9E500774290 /* DecryptFileOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1955FC72844A9E500774290 /* DecryptFileOperation.swift */; };
-		E1955FCA2844A9FF00774290 /* EncryptFileOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1955FC92844A9FF00774290 /* EncryptFileOperation.swift */; };
-		E1955FCF2844AA5400774290 /* RnCryptoUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1955FCE2844AA5400774290 /* RnCryptoUtils.swift */; };
+		E1378B8328460D2C00BBE5B4 /* IDZSwiftCommonCrypto.framework in Sources */ = {isa = PBXBuildFile; fileRef = E136EF30284559AF0002609B /* IDZSwiftCommonCrypto.framework */; };
+		E1378B8428460D3300BBE5B4 /* AES.swift in Sources */ = {isa = PBXBuildFile; fileRef = E136EF3428456AF30002609B /* AES.swift */; };
+		E1378B8528460D3700BBE5B4 /* RnCryptoUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1955FCE2844AA5400774290 /* RnCryptoUtils.swift */; };
+		E1378B8628460D4500BBE5B4 /* DecryptFileOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1955FC72844A9E500774290 /* DecryptFileOperation.swift */; };
+		E1378B8728460D4800BBE5B4 /* EncryptFileOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1955FC92844A9FF00774290 /* EncryptFileOperation.swift */; };
+		E1378B8828460D4C00BBE5B4 /* RnCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4FF95D6245B92E800C19C63 /* RnCrypto.swift */; };
 		E1E09E212844E235001050F7 /* libRnCrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 134814201AA4EA6300B7C361 /* libRnCrypto.a */; };
 		E9AA204F3839523FEB72E6DF /* Pods_RnCrypto.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7E27A9F55BFA0BE59A8892F0 /* Pods_RnCrypto.framework */; };
-		F4FF95D7245B92E800C19C63 /* RnCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4FF95D6245B92E800C19C63 /* RnCrypto.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -311,11 +312,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E1955FCF2844AA5400774290 /* RnCryptoUtils.swift in Sources */,
-				F4FF95D7245B92E800C19C63 /* RnCrypto.swift in Sources */,
-				E1955FCA2844A9FF00774290 /* EncryptFileOperation.swift in Sources */,
-				E1955FC82844A9E500774290 /* DecryptFileOperation.swift in Sources */,
-				E136EF3728456C150002609B /* AES.swift in Sources */,
+				E1378B8828460D4C00BBE5B4 /* RnCrypto.swift in Sources */,
+				E1378B8728460D4800BBE5B4 /* EncryptFileOperation.swift in Sources */,
+				E1378B8628460D4500BBE5B4 /* DecryptFileOperation.swift in Sources */,
+				E1378B8528460D3700BBE5B4 /* RnCryptoUtils.swift in Sources */,
+				E1378B8428460D3300BBE5B4 /* AES.swift in Sources */,
+				E1378B8328460D2C00BBE5B4 /* IDZSwiftCommonCrypto.framework in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -478,6 +480,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = FDF0F93F5BD0427BDA93850A /* Pods-RnCrypto-RnCryptoTests.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -513,6 +516,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3CA0EDD88509E9771E5AF02D /* Pods-RnCrypto-RnCryptoTests.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";

@@ -31,9 +31,10 @@ class RnCryptoUtils {
 
 
 enum RnCryptoError: Error {
-    case plainFileNotFound
+    case badIv
+    case badKey
+    case decryptedFile
+    case encryptedFile
     case encryptionFailed
-    case decryptionFailed
-    case writeEncryptedFileFailed
-    case writeDecryptedFileFailed
+    case plainFile
 }

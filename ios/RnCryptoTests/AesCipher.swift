@@ -8,37 +8,75 @@
 
 import XCTest
 @testable import RnCrypto
+import IDZSwiftCommonCrypto
+
 
 class AesCipherTests: XCTestCase {
     let sut = AesCipher()
     let utils = RnCryptoUtils()
+    
     func testEncrypt() throws {
-        let destination = NSTemporaryDirectory() + "/encrypt.enc"
-        let inputStream = InputStream.init(data: "Hi im a string".data(using: .utf8)!)
+        let destination = NSTemporaryDirectory() + "/encrypt"
+        let inputStream = InputStream.init(data: "test".data(using: .utf8)!)
         let outputStream = OutputStream(url: URL(fileURLWithPath: destination), append: true)
         
         
-        let hexKey = "570ae1d9a9e44af02ca9215591692627328aa62d068e50d285a01cfb0c811775"
-        let hexIv = "2948404D63516654"
+        let hexKey = "4ba9058b2efc8c7c9c869b6573b725aa8bf67aecb26d3ebd678e624565570e9c"
+        let hexIv = "4ae6fcc4dd6ebcdb9076f2396d64da48"
         
         self.sut.encrypt(
             input: inputStream,
             output: outputStream!,
             key: self.utils.hexStringToBytes(hexKey)!,
-            iv:  self.utils.hexStringToBytes(hexIv)!
+            iv:  self.utils.hexStringToBytes(hexIv)!,
+            callback: {(error, status) in
+                XCTAssertEqual(status, Status.success)
+                XCTAssertEqual(error, nil)
+            }
         )
-        
-        do {
-            let result = try String(contentsOf: URL(fileURLWithPath:destination), encoding: .utf8)
-            
-            XCTAssertEqual(result, "123")
-            
-        } catch {
-            fatalError("Cannot get encrypted file content, failing test")
-        }
-        
-        
-    
     }
-
+    
+    func testDecrypt() throws {
+        let encryptedBytes: [UInt8] = [97, 24, 150, 210, 51, 34, 168, 164, 0, 19, 163, 219, 9, 44, 97, 24, 150, 210, 51, 34, 168, 164, 0, 19, 163, 219, 9, 44, 97, 24, 150, 210, 51, 34, 168, 164, 0, 19, 163, 219, 9, 44, 97, 24, 150, 210, 51, 34, 168, 164, 0, 19, 163, 219, 9, 44, 97, 24, 150, 210, 51, 34, 168, 164, 0, 19, 163, 219, 9, 44, 97, 24, 150, 210, 51, 34, 168, 164, 0, 19, 163, 219, 9, 44, 97, 24, 150, 210, 51, 34, 168, 164, 0, 19, 163, 219, 9, 44, 97, 24, 150, 210, 51, 34, 168, 164, 0, 19, 163, 219, 9, 44, 97, 24, 150, 210, 51, 34, 168, 164, 0, 19, 163, 219, 9, 44, 97, 24, 150, 210, 51, 34, 168, 164, 0, 19, 163, 219, 9, 44, 97, 24, 150, 210, 51, 34, 168, 164, 0, 19, 163, 219, 9, 44, 97, 24, 150, 210, 51, 34, 168, 164, 0, 19, 163, 219, 9, 44, 97, 24, 150, 210, 51, 34, 168, 164, 0, 19, 163, 219, 9, 44, 97, 24, 150, 210, 51, 34, 168, 164, 0, 19, 163, 219, 9, 44, 93, 20, 197, 207, 93, 20, 197, 207, 93, 20, 197, 207]
+        
+        let destination = NSTemporaryDirectory() + "/plain"
+        let inputStream = InputStream(data: Data(bytes: encryptedBytes, count: encryptedBytes.count))
+        let outputStream = OutputStream(url: URL(fileURLWithPath: destination), append: true)
+        
+        
+        let hexKey = "4ba9058b2efc8c7c9c869b6573b725aa8bf67aecb26d3ebd678e624565570e9c"
+        let hexIv = "4ae6fcc4dd6ebcdb9076f2396d64da48"
+        
+        self.sut.decrypt(
+            input: inputStream,
+            output: outputStream!,
+            key: self.utils.hexStringToBytes(hexKey)!,
+            iv:  self.utils.hexStringToBytes(hexIv)!,
+            callback: {(error, status) in
+                XCTAssertEqual(status, Status.success)
+                XCTAssertEqual(error, nil)
+            }
+        )
+    }
+    
+    func testBadIV() throws {
+        let destination = NSTemporaryDirectory() + "/encrypt"
+        let inputStream = InputStream.init(data: "teststring".data(using: .utf8)!)
+        let outputStream = OutputStream(url: URL(fileURLWithPath: destination), append: true)
+        
+        
+        let hexKey = "4ba9058b2efc8c7c9c869b6573b725aa8bf67aecb26d3ebd678e624565570e9c"
+        
+        self.sut.encrypt(
+            input: inputStream,
+            output: outputStream!,
+            key: self.utils.hexStringToBytes(hexKey)!,
+            iv:  [UInt8](),
+            callback: {(error, status) in
+                XCTAssertEqual(status, nil)
+                XCTAssertEqual(error, RnCryptoError.badIv)
+                
+            }
+        )
+    }
 }
