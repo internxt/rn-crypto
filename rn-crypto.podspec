@@ -17,4 +17,5 @@ Pod::Spec.new do |s|
 
   s.dependency "React-Core"
   s.dependency 'IDZSwiftCommonCrypto', '~> 0.13'
+  s.exclude_files = ['ios/Pods/**/*', 'ios/RnCryptoTests/**/*']
 end
