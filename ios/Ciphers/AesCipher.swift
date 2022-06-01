@@ -11,7 +11,7 @@ import IDZSwiftCommonCrypto
 
 class AesCipher {
     var utils = RnCryptoUtils()
-    
+    let bufferSize = 1024 * 8
     private func isValidIv(iv: [UInt8]) -> Bool {
         return StreamCryptor.Algorithm.aes.blockSize() == iv.count
     }
@@ -30,7 +30,7 @@ class AesCipher {
             
             let cryptStream = StreamCryptor(
                 operation: StreamCryptor.Operation.encrypt,
-                algorithm: StreamCryptor.Algorithm.aes,
+                algorithm: algorithm,
                 mode: StreamCryptor.Mode.CTR,
                 padding: StreamCryptor.Padding.NoPadding,
                 key: key,
@@ -38,7 +38,6 @@ class AesCipher {
             )
             
             // Prepare buffers
-            let bufferSize = 1024;
             var inputBuffer = Array<UInt8>(repeating:0, count:bufferSize)
             var outputBuffer = Array<UInt8>(repeating:0, count:bufferSize)
             
@@ -100,7 +99,6 @@ class AesCipher {
         )
         
         // Prepare buffers
-        let bufferSize = 1024;
         var inputBuffer = Array<UInt8>(repeating:0, count:bufferSize)
         var outputBuffer = Array<UInt8>(repeating:0, count:bufferSize)
         

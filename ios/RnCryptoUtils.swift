@@ -9,6 +9,7 @@ import Foundation
 
 class RnCryptoUtils {
     public func hexStringToBytes(_ string: String) -> [UInt8]? {
+        
         let length = string.count
         if length & 1 != 0 {
             return nil

@@ -8,9 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		3192992EFB67FE51FF701BA0 /* Pods_RnCrypto_RnCryptoTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F1A39B82188A77889B00269 /* Pods_RnCrypto_RnCryptoTests.framework */; };
-		E136EF3B28456DFE0002609B /* AesCipher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E136EF3A28456DFE0002609B /* AesCipher.swift */; };
+		E136EF3B28456DFE0002609B /* AesCipherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E136EF3A28456DFE0002609B /* AesCipherTest.swift */; };
 		E1378B8328460D2C00BBE5B4 /* IDZSwiftCommonCrypto.framework in Sources */ = {isa = PBXBuildFile; fileRef = E136EF30284559AF0002609B /* IDZSwiftCommonCrypto.framework */; };
-		E1378B8428460D3300BBE5B4 /* AES.swift in Sources */ = {isa = PBXBuildFile; fileRef = E136EF3428456AF30002609B /* AES.swift */; };
+		E1378B8428460D3300BBE5B4 /* AesCipher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E136EF3428456AF30002609B /* AesCipher.swift */; };
 		E1378B8528460D3700BBE5B4 /* RnCryptoUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1955FCE2844AA5400774290 /* RnCryptoUtils.swift */; };
 		E1378B8628460D4500BBE5B4 /* DecryptFileOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1955FC72844A9E500774290 /* DecryptFileOperation.swift */; };
 		E1378B8728460D4800BBE5B4 /* EncryptFileOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1955FC92844A9FF00774290 /* EncryptFileOperation.swift */; };
@@ -50,8 +50,8 @@
 		9F1A39B82188A77889B00269 /* Pods_RnCrypto_RnCryptoTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RnCrypto_RnCryptoTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3E7B5891CC2AC0600A0062D /* RnCrypto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RnCrypto.m; sourceTree = "<group>"; };
 		E136EF30284559AF0002609B /* IDZSwiftCommonCrypto.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = IDZSwiftCommonCrypto.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		E136EF3428456AF30002609B /* AES.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AES.swift; sourceTree = "<group>"; };
-		E136EF3A28456DFE0002609B /* AesCipher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AesCipher.swift; sourceTree = "<group>"; };
+		E136EF3428456AF30002609B /* AesCipher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AesCipher.swift; sourceTree = "<group>"; };
+		E136EF3A28456DFE0002609B /* AesCipherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AesCipherTest.swift; sourceTree = "<group>"; };
 		E1955FC72844A9E500774290 /* DecryptFileOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecryptFileOperation.swift; sourceTree = "<group>"; };
 		E1955FC92844A9FF00774290 /* EncryptFileOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncryptFileOperation.swift; sourceTree = "<group>"; };
 		E1955FCE2844AA5400774290 /* RnCryptoUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RnCryptoUtils.swift; sourceTree = "<group>"; };
@@ -131,7 +131,7 @@
 		E136EF3628456C0F0002609B /* Ciphers */ = {
 			isa = PBXGroup;
 			children = (
-				E136EF3428456AF30002609B /* AES.swift */,
+				E136EF3428456AF30002609B /* AesCipher.swift */,
 			);
 			path = Ciphers;
 			sourceTree = "<group>";
@@ -148,7 +148,7 @@
 		E1E09E1E2844E235001050F7 /* RnCryptoTests */ = {
 			isa = PBXGroup;
 			children = (
-				E136EF3A28456DFE0002609B /* AesCipher.swift */,
+				E136EF3A28456DFE0002609B /* AesCipherTest.swift */,
 			);
 			path = RnCryptoTests;
 			sourceTree = "<group>";
@@ -209,6 +209,7 @@
 					};
 					E1E09E1C2844E235001050F7 = {
 						CreatedOnToolsVersion = 13.2.1;
+						DevelopmentTeam = JR4S3SY396;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -316,7 +317,7 @@
 				E1378B8728460D4800BBE5B4 /* EncryptFileOperation.swift in Sources */,
 				E1378B8628460D4500BBE5B4 /* DecryptFileOperation.swift in Sources */,
 				E1378B8528460D3700BBE5B4 /* RnCryptoUtils.swift in Sources */,
-				E1378B8428460D3300BBE5B4 /* AES.swift in Sources */,
+				E1378B8428460D3300BBE5B4 /* AesCipher.swift in Sources */,
 				E1378B8328460D2C00BBE5B4 /* IDZSwiftCommonCrypto.framework in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -325,7 +326,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E136EF3B28456DFE0002609B /* AesCipher.swift in Sources */,
+				E136EF3B28456DFE0002609B /* AesCipherTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -439,7 +440,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4A28B817060F96FC339C868C /* Pods-RnCrypto.debug.xcconfig */;
 			buildSettings = {
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
@@ -447,7 +447,10 @@
 					"$(SRCROOT)/../../react-native/React/**",
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+				);
 				PRODUCT_NAME = RnCrypto;
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "RnCrypto-Bridging-Header.h";
@@ -460,7 +463,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1CA21572FED786844E10EF3A /* Pods-RnCrypto.release.xcconfig */;
 			buildSettings = {
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
@@ -468,7 +470,10 @@
 					"$(SRCROOT)/../../react-native/React/**",
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+				);
 				PRODUCT_NAME = RnCrypto;
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "RnCrypto-Bridging-Header.h";
@@ -488,12 +493,13 @@
 				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = "$(inherited)";
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
+				DEVELOPMENT_TEAM = JR4S3SY396;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
@@ -524,13 +530,14 @@
 				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = "$(inherited)";
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
+				DEVELOPMENT_TEAM = JR4S3SY396;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.2;

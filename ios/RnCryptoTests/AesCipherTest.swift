@@ -11,7 +11,7 @@ import XCTest
 import IDZSwiftCommonCrypto
 
 
-class AesCipherTests: XCTestCase {
+class AesCipherTest: XCTestCase {
     let sut = AesCipher()
     let utils = RnCryptoUtils()
     
