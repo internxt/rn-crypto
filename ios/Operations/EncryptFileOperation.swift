@@ -55,13 +55,8 @@ class EncryptFileOperation : Operation {
                 return self.callback(RnCryptoError.encryptedFile)
             }
             
-            guard let iv = self.utils.hexStringToBytes(self.hexIv) else {
-                throw RnCryptoError.badIv
-            }
-            
-            guard let key = self.utils.hexStringToBytes(self.hexKey) else {
-                throw RnCryptoError.badKey
-            }
+            let iv = self.utils.hexStringToBytes(self.hexIv)
+            let key = self.utils.hexStringToBytes(self.hexKey)
             
             
             self.aes.encrypt(

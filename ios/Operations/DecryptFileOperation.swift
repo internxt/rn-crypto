@@ -44,7 +44,6 @@ class DecryptFileOperation : Operation {
     override func main() {
         
         do {
-            
             if self.plainFileStream == nil {
                 return self.callback(RnCryptoError.plainFile)
             }
@@ -53,13 +52,8 @@ class DecryptFileOperation : Operation {
                 return self.callback(RnCryptoError.decryptedFile)
             }
             
-            guard let iv = self.utils.hexStringToBytes(self.hexIv) else {
-                throw RnCryptoError.badIv
-            }
-            
-            guard let key = self.utils.hexStringToBytes(self.hexKey) else {
-                throw RnCryptoError.badKey
-            }
+            let iv = self.utils.hexStringToBytes(self.hexIv)
+            let key = self.utils.hexStringToBytes(self.hexKey)
             
             self.aes.decrypt(
                 input:  self.encryptedFileStream!,

@@ -5,18 +5,23 @@
 //  Created by Robert on 1/6/22.
 //  Copyright © 2022 Facebook. All rights reserved.
 //
-
+import Foundation
 import XCTest
 @testable import RnCrypto
+@testable import IDZSwiftCommonCrypto
+
+
 
 class RnCryptoUtilsTest: XCTestCase {
     let sut = RnCryptoUtils()
  
     
     func testHexStringToBytesFail() throws {
-        // Returns nil if hexString is not a valid hex string
-        let bytes = sut.hexStringToBytes("imnotahexstring")
-        XCTAssertNil(bytes)
+        // Throws a fatalError if string cannot be converted to bytes
+        expectFatalError(expectedMessage: "convertHexDigit: Invalid hex digit") {
+            self.sut.hexStringToBytes("imnotahexstring")
+        }
+       
     }
     
     
@@ -34,4 +39,36 @@ class RnCryptoUtilsTest: XCTestCase {
     }
   
 
+}
+
+
+
+// MARK: - fatalError testing
+// See: https://marcosantadev.com/test-swift-fatalerror/
+extension XCTestCase {
+    func expectFatalError(expectedMessage: String, testcase: @escaping () -> Void) {
+        
+        let expectation = self.expectation(description: "expectingFatalError")
+        var assertionMessage: String? = nil
+        
+        FatalErrorUtil.replaceFatalError { message, _, _ in
+            assertionMessage = message
+            expectation.fulfill()
+            self.unreachable()
+        }
+        
+        DispatchQueue.global(qos: .userInitiated).async(execute: testcase)
+        
+        waitForExpectations(timeout: 2) { _ in
+            XCTAssertEqual(assertionMessage, expectedMessage)
+            
+            FatalErrorUtil.restoreFatalError()
+        }
+    }
+    
+    private func unreachable() -> Never {
+        repeat {
+            RunLoop.current.run()
+        } while (true)
+    }
 }

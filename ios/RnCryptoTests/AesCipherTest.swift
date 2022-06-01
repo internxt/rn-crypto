@@ -27,8 +27,8 @@ class AesCipherTest: XCTestCase {
         self.sut.encrypt(
             input: inputStream,
             output: outputStream!,
-            key: self.utils.hexStringToBytes(hexKey)!,
-            iv:  self.utils.hexStringToBytes(hexIv)!,
+            key: self.utils.hexStringToBytes(hexKey),
+            iv:  self.utils.hexStringToBytes(hexIv),
             callback: {(error, status) in
                 XCTAssertEqual(status, Status.success)
                 XCTAssertEqual(error, nil)
@@ -50,8 +50,8 @@ class AesCipherTest: XCTestCase {
         self.sut.decrypt(
             input: inputStream,
             output: outputStream!,
-            key: self.utils.hexStringToBytes(hexKey)!,
-            iv:  self.utils.hexStringToBytes(hexIv)!,
+            key: self.utils.hexStringToBytes(hexKey),
+            iv:  self.utils.hexStringToBytes(hexIv),
             callback: {(error, status) in
                 XCTAssertEqual(status, Status.success)
                 XCTAssertEqual(error, nil)
@@ -70,7 +70,7 @@ class AesCipherTest: XCTestCase {
         self.sut.encrypt(
             input: inputStream,
             output: outputStream!,
-            key: self.utils.hexStringToBytes(hexKey)!,
+            key: self.utils.hexStringToBytes(hexKey),
             iv:  [UInt8](),
             callback: {(error, status) in
                 XCTAssertEqual(status, nil)
