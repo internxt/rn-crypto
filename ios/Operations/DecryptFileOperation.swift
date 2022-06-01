@@ -53,11 +53,19 @@ class DecryptFileOperation : Operation {
                 return self.callback(RnCryptoError.decryptedFile)
             }
             
+            guard let iv = self.utils.hexStringToBytes(self.hexIv) else {
+                throw RnCryptoError.badIv
+            }
+            
+            guard let key = self.utils.hexStringToBytes(self.hexKey) else {
+                throw RnCryptoError.badKey
+            }
+            
             self.aes.decrypt(
                 input:  self.encryptedFileStream!,
                 output:self.plainFileStream!,
-                key: self.utils.hexStringToBytes(self.hexKey)!,
-                iv: self.utils.hexStringToBytes(self.hexIv)!,
+                key: key,
+                iv: iv,
                 callback: {(error, status) in
                     self.callback(error)
                 }

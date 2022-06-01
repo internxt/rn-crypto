@@ -29,7 +29,7 @@ class RnCrypto: NSObject {
             hexIv: hexIv,
             callback: {(error: Error?) in
                 if error != nil {
-                    callback([error?.localizedDescription, NSNull()])
+                    callback([error, NSNull()])
                 } else {
                     callback([NSNull(), NSNull()])
                 }

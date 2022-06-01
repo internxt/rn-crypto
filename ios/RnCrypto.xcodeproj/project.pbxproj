@@ -15,6 +15,7 @@
 		E1378B8628460D4500BBE5B4 /* DecryptFileOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1955FC72844A9E500774290 /* DecryptFileOperation.swift */; };
 		E1378B8728460D4800BBE5B4 /* EncryptFileOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1955FC92844A9FF00774290 /* EncryptFileOperation.swift */; };
 		E1378B8828460D4C00BBE5B4 /* RnCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4FF95D6245B92E800C19C63 /* RnCrypto.swift */; };
+		E160A3422847AB0800B59260 /* RnCryptoUtilsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E160A3412847AB0800B59260 /* RnCryptoUtilsTest.swift */; };
 		E1E09E212844E235001050F7 /* libRnCrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 134814201AA4EA6300B7C361 /* libRnCrypto.a */; };
 		E9AA204F3839523FEB72E6DF /* Pods_RnCrypto.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7E27A9F55BFA0BE59A8892F0 /* Pods_RnCrypto.framework */; };
 /* End PBXBuildFile section */
@@ -52,6 +53,7 @@
 		E136EF30284559AF0002609B /* IDZSwiftCommonCrypto.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = IDZSwiftCommonCrypto.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E136EF3428456AF30002609B /* AesCipher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AesCipher.swift; sourceTree = "<group>"; };
 		E136EF3A28456DFE0002609B /* AesCipherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AesCipherTest.swift; sourceTree = "<group>"; };
+		E160A3412847AB0800B59260 /* RnCryptoUtilsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RnCryptoUtilsTest.swift; sourceTree = "<group>"; };
 		E1955FC72844A9E500774290 /* DecryptFileOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecryptFileOperation.swift; sourceTree = "<group>"; };
 		E1955FC92844A9FF00774290 /* EncryptFileOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncryptFileOperation.swift; sourceTree = "<group>"; };
 		E1955FCE2844AA5400774290 /* RnCryptoUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RnCryptoUtils.swift; sourceTree = "<group>"; };
@@ -148,6 +150,7 @@
 		E1E09E1E2844E235001050F7 /* RnCryptoTests */ = {
 			isa = PBXGroup;
 			children = (
+				E160A3412847AB0800B59260 /* RnCryptoUtilsTest.swift */,
 				E136EF3A28456DFE0002609B /* AesCipherTest.swift */,
 			);
 			path = RnCryptoTests;
@@ -326,6 +329,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E160A3422847AB0800B59260 /* RnCryptoUtilsTest.swift in Sources */,
 				E136EF3B28456DFE0002609B /* AesCipherTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

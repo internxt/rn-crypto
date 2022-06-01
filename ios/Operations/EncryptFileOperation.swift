@@ -55,14 +55,21 @@ class EncryptFileOperation : Operation {
                 return self.callback(RnCryptoError.encryptedFile)
             }
             
+            guard let iv = self.utils.hexStringToBytes(self.hexIv) else {
+                throw RnCryptoError.badIv
+            }
+            
+            guard let key = self.utils.hexStringToBytes(self.hexKey) else {
+                throw RnCryptoError.badKey
+            }
+            
             
             self.aes.encrypt(
                 input: self.plainFileStream!,
                 output: self.encryptedFileStream!,
-                key: self.utils.hexStringToBytes(self.hexKey)!,
-                iv: self.utils.hexStringToBytes(self.hexIv)!,
+                key: key,
+                iv: iv,
                 callback: {(error, status) in
-                
                     self.callback(error)
                 }
             )
