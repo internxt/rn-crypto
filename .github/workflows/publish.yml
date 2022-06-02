@@ -30,7 +30,11 @@ jobs:
         with:
           node-version: 16
           registry-url: https://npm.pkg.github.com/
+      - name: git config
+        run: |
+          git config user.name "${GITHUB_ACTOR}"
+          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
       - run: yarn install
       - run: yarn release
         env:
-          NODE_AUTH_TOKEN: ${{secrets.AUTH_TOKEN}}
+          GITHUB_TOKEN: ${{secrets.AUTH_TOKEN}}
