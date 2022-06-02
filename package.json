@@ -26,7 +26,6 @@
     "typescript": "tsc --noEmit",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "prepare": "bob build",
-    "release": "release-it",
     "example": "yarn --cwd example",
     "pods": "cd example && pod-install --quiet",
     "bootstrap": "yarn example && yarn && yarn pods"
@@ -36,13 +35,13 @@
     "ios",
     "android"
   ],
-  "repository": "https://github.com/sg-gs/rn-crypto",
+  "repository": "https://github.com/internxt/rn-crypto",
   "author": "Sergio Gutierrez Villalba <gv.sergiodevs@gmail.com> (https://github.com/sg-gs)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/sg-gs/rn-crypto/issues"
+    "url": "https://github.com/internxt/rn-crypto"
   },
-  "homepage": "https://github.com/sg-gs/rn-crypto#readme",
+  "homepage": "https://github.com/internxt/rn-crypto/rn-crypto#readme",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
   },
