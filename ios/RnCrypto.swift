@@ -8,6 +8,7 @@ class RnCrypto: NSObject {
     var encryptionQueue = OperationQueue()
     var decryptionQueue = OperationQueue()
     
+
     func load() {
         encryptionQueue.name = "EncryptionQueue"
         decryptionQueue.name = "DecryptionQueue"
@@ -65,6 +66,10 @@ class RnCrypto: NSObject {
         )
 
         self.decryptionQueue.addOperation(operation)
-        
+    }
+
+
+    @objc func requiresMainQueueSetup() -> Bool {
+        return false
     }
 }
