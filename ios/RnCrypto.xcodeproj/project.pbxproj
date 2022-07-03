@@ -7,7 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3192992EFB67FE51FF701BA0 /* Pods_RnCrypto_RnCryptoTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F1A39B82188A77889B00269 /* Pods_RnCrypto_RnCryptoTests.framework */; };
+		D36E45D3B6ACBB294CD65AA7 /* Pods_RnCrypto.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9C1477C51CC4F2684749003 /* Pods_RnCrypto.framework */; };
+		E120B966286F46B800C70F46 /* KeyDerivation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E177880A286F239D0000BE60 /* KeyDerivation.swift */; };
+		E120B969286F4AEE00C70F46 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E120B968286F499D00C70F46 /* Extensions.swift */; };
 		E136EF3B28456DFE0002609B /* AesCipherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E136EF3A28456DFE0002609B /* AesCipherTest.swift */; };
 		E1378B8328460D2C00BBE5B4 /* IDZSwiftCommonCrypto.framework in Sources */ = {isa = PBXBuildFile; fileRef = E136EF30284559AF0002609B /* IDZSwiftCommonCrypto.framework */; };
 		E1378B8428460D3300BBE5B4 /* AesCipher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E136EF3428456AF30002609B /* AesCipher.swift */; };
@@ -17,8 +19,10 @@
 		E1378B8828460D4C00BBE5B4 /* RnCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4FF95D6245B92E800C19C63 /* RnCrypto.swift */; };
 		E160A3422847AB0800B59260 /* RnCryptoUtilsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E160A3412847AB0800B59260 /* RnCryptoUtilsTest.swift */; };
 		E160A3432847D43E00B59260 /* IDZSwiftCommonCrypto.framework in Sources */ = {isa = PBXBuildFile; fileRef = E136EF30284559AF0002609B /* IDZSwiftCommonCrypto.framework */; };
+		E170E623286F33B10014EF09 /* KeyDerivationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E170E622286F33B10014EF09 /* KeyDerivationTest.swift */; };
+		E1778809286B61480000BE60 /* HMAC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1778808286B61480000BE60 /* HMAC.swift */; };
 		E1E09E212844E235001050F7 /* libRnCrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 134814201AA4EA6300B7C361 /* libRnCrypto.a */; };
-		E9AA204F3839523FEB72E6DF /* Pods_RnCrypto.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7E27A9F55BFA0BE59A8892F0 /* Pods_RnCrypto.framework */; };
+		FD3E49A751B14177B258BEB1 /* Pods_RnCrypto_RnCryptoTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE262DAB3158A7F99E5CC6A1 /* Pods_RnCrypto_RnCryptoTests.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,23 +49,27 @@
 
 /* Begin PBXFileReference section */
 		134814201AA4EA6300B7C361 /* libRnCrypto.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRnCrypto.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		1CA21572FED786844E10EF3A /* Pods-RnCrypto.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RnCrypto.release.xcconfig"; path = "Target Support Files/Pods-RnCrypto/Pods-RnCrypto.release.xcconfig"; sourceTree = "<group>"; };
-		3CA0EDD88509E9771E5AF02D /* Pods-RnCrypto-RnCryptoTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RnCrypto-RnCryptoTests.release.xcconfig"; path = "Target Support Files/Pods-RnCrypto-RnCryptoTests/Pods-RnCrypto-RnCryptoTests.release.xcconfig"; sourceTree = "<group>"; };
-		4A28B817060F96FC339C868C /* Pods-RnCrypto.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RnCrypto.debug.xcconfig"; path = "Target Support Files/Pods-RnCrypto/Pods-RnCrypto.debug.xcconfig"; sourceTree = "<group>"; };
-		7E27A9F55BFA0BE59A8892F0 /* Pods_RnCrypto.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RnCrypto.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		9F1A39B82188A77889B00269 /* Pods_RnCrypto_RnCryptoTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RnCrypto_RnCryptoTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B6F46640B9A292C519C07B3 /* Pods-RnCrypto-RnCryptoTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RnCrypto-RnCryptoTests.debug.xcconfig"; path = "Target Support Files/Pods-RnCrypto-RnCryptoTests/Pods-RnCrypto-RnCryptoTests.debug.xcconfig"; sourceTree = "<group>"; };
+		58B005432DC7DBF1DADEDB3C /* Pods-RnCrypto-RnCryptoTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RnCrypto-RnCryptoTests.release.xcconfig"; path = "Target Support Files/Pods-RnCrypto-RnCryptoTests/Pods-RnCrypto-RnCryptoTests.release.xcconfig"; sourceTree = "<group>"; };
+		8FAA9B2BED5502B93D307A8D /* Pods-RnCrypto.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RnCrypto.debug.xcconfig"; path = "Target Support Files/Pods-RnCrypto/Pods-RnCrypto.debug.xcconfig"; sourceTree = "<group>"; };
 		B3E7B5891CC2AC0600A0062D /* RnCrypto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RnCrypto.m; sourceTree = "<group>"; };
+		BA209EAEB8B1B16A3E451990 /* Pods-RnCrypto.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RnCrypto.release.xcconfig"; path = "Target Support Files/Pods-RnCrypto/Pods-RnCrypto.release.xcconfig"; sourceTree = "<group>"; };
+		DE262DAB3158A7F99E5CC6A1 /* Pods_RnCrypto_RnCryptoTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RnCrypto_RnCryptoTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E120B968286F499D00C70F46 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		E136EF30284559AF0002609B /* IDZSwiftCommonCrypto.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = IDZSwiftCommonCrypto.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E136EF3428456AF30002609B /* AesCipher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AesCipher.swift; sourceTree = "<group>"; };
 		E136EF3A28456DFE0002609B /* AesCipherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AesCipherTest.swift; sourceTree = "<group>"; };
 		E160A3412847AB0800B59260 /* RnCryptoUtilsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RnCryptoUtilsTest.swift; sourceTree = "<group>"; };
+		E170E622286F33B10014EF09 /* KeyDerivationTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyDerivationTest.swift; sourceTree = "<group>"; };
+		E1778808286B61480000BE60 /* HMAC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HMAC.swift; sourceTree = "<group>"; };
+		E177880A286F239D0000BE60 /* KeyDerivation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyDerivation.swift; sourceTree = "<group>"; };
 		E1955FC72844A9E500774290 /* DecryptFileOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecryptFileOperation.swift; sourceTree = "<group>"; };
 		E1955FC92844A9FF00774290 /* EncryptFileOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncryptFileOperation.swift; sourceTree = "<group>"; };
 		E1955FCE2844AA5400774290 /* RnCryptoUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RnCryptoUtils.swift; sourceTree = "<group>"; };
 		E1E09E1D2844E235001050F7 /* RnCryptoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RnCryptoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E9C1477C51CC4F2684749003 /* Pods_RnCrypto.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RnCrypto.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F4FF95D5245B92E700C19C63 /* RnCrypto-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RnCrypto-Bridging-Header.h"; sourceTree = "<group>"; };
 		F4FF95D6245B92E800C19C63 /* RnCrypto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RnCrypto.swift; sourceTree = "<group>"; };
-		FDF0F93F5BD0427BDA93850A /* Pods-RnCrypto-RnCryptoTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RnCrypto-RnCryptoTests.debug.xcconfig"; path = "Target Support Files/Pods-RnCrypto-RnCryptoTests/Pods-RnCrypto-RnCryptoTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,7 +77,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E9AA204F3839523FEB72E6DF /* Pods_RnCrypto.framework in Frameworks */,
+				D36E45D3B6ACBB294CD65AA7 /* Pods_RnCrypto.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,7 +86,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E1E09E212844E235001050F7 /* libRnCrypto.a in Frameworks */,
-				3192992EFB67FE51FF701BA0 /* Pods_RnCrypto_RnCryptoTests.framework in Frameworks */,
+				FD3E49A751B14177B258BEB1 /* Pods_RnCrypto_RnCryptoTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -97,8 +105,8 @@
 			isa = PBXGroup;
 			children = (
 				E136EF30284559AF0002609B /* IDZSwiftCommonCrypto.framework */,
-				7E27A9F55BFA0BE59A8892F0 /* Pods_RnCrypto.framework */,
-				9F1A39B82188A77889B00269 /* Pods_RnCrypto_RnCryptoTests.framework */,
+				E9C1477C51CC4F2684749003 /* Pods_RnCrypto.framework */,
+				DE262DAB3158A7F99E5CC6A1 /* Pods_RnCrypto_RnCryptoTests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -106,6 +114,9 @@
 		58B511D21A9E6C8500147676 = {
 			isa = PBXGroup;
 			children = (
+				E120B968286F499D00C70F46 /* Extensions.swift */,
+				E177880A286F239D0000BE60 /* KeyDerivation.swift */,
+				E1778808286B61480000BE60 /* HMAC.swift */,
 				E136EF3628456C0F0002609B /* Ciphers */,
 				E1955FCE2844AA5400774290 /* RnCryptoUtils.swift */,
 				E1955FC62844A98A00774290 /* Operations */,
@@ -123,10 +134,10 @@
 		7F9B80BBA9BACD340780E58A /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				4A28B817060F96FC339C868C /* Pods-RnCrypto.debug.xcconfig */,
-				1CA21572FED786844E10EF3A /* Pods-RnCrypto.release.xcconfig */,
-				FDF0F93F5BD0427BDA93850A /* Pods-RnCrypto-RnCryptoTests.debug.xcconfig */,
-				3CA0EDD88509E9771E5AF02D /* Pods-RnCrypto-RnCryptoTests.release.xcconfig */,
+				8FAA9B2BED5502B93D307A8D /* Pods-RnCrypto.debug.xcconfig */,
+				BA209EAEB8B1B16A3E451990 /* Pods-RnCrypto.release.xcconfig */,
+				4B6F46640B9A292C519C07B3 /* Pods-RnCrypto-RnCryptoTests.debug.xcconfig */,
+				58B005432DC7DBF1DADEDB3C /* Pods-RnCrypto-RnCryptoTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -151,6 +162,7 @@
 		E1E09E1E2844E235001050F7 /* RnCryptoTests */ = {
 			isa = PBXGroup;
 			children = (
+				E170E622286F33B10014EF09 /* KeyDerivationTest.swift */,
 				E160A3412847AB0800B59260 /* RnCryptoUtilsTest.swift */,
 				E136EF3A28456DFE0002609B /* AesCipherTest.swift */,
 			);
@@ -164,7 +176,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 58B511EF1A9E6C8500147676 /* Build configuration list for PBXNativeTarget "RnCrypto" */;
 			buildPhases = (
-				792B62A8CCEFE9C178E908A5 /* [CP] Check Pods Manifest.lock */,
+				4E3E4C7611E5CE04DDED0544 /* [CP] Check Pods Manifest.lock */,
 				58B511D71A9E6C8500147676 /* Sources */,
 				58B511D81A9E6C8500147676 /* Frameworks */,
 				58B511D91A9E6C8500147676 /* CopyFiles */,
@@ -182,11 +194,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = E1E09E242844E235001050F7 /* Build configuration list for PBXNativeTarget "RnCryptoTests" */;
 			buildPhases = (
-				E221610A29E925DD948BB187 /* [CP] Check Pods Manifest.lock */,
+				A259F8EE4BD2E28B5A5AA439 /* [CP] Check Pods Manifest.lock */,
 				E1E09E192844E235001050F7 /* Sources */,
 				E1E09E1A2844E235001050F7 /* Frameworks */,
 				E1E09E1B2844E235001050F7 /* Resources */,
-				D34430473254B39090737BC8 /* [CP] Copy Pods Resources */,
+				16174C3FDE099CB663865D39 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -248,7 +260,25 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		792B62A8CCEFE9C178E908A5 /* [CP] Check Pods Manifest.lock */ = {
+		16174C3FDE099CB663865D39 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-RnCrypto-RnCryptoTests/Pods-RnCrypto-RnCryptoTests-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/AccessibilityResources.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AccessibilityResources.bundle",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-RnCrypto-RnCryptoTests/Pods-RnCrypto-RnCryptoTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		4E3E4C7611E5CE04DDED0544 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -270,25 +300,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		D34430473254B39090737BC8 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-RnCrypto-RnCryptoTests/Pods-RnCrypto-RnCryptoTests-resources.sh",
-				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/AccessibilityResources.bundle",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AccessibilityResources.bundle",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-RnCrypto-RnCryptoTests/Pods-RnCrypto-RnCryptoTests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		E221610A29E925DD948BB187 /* [CP] Check Pods Manifest.lock */ = {
+		A259F8EE4BD2E28B5A5AA439 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -317,8 +329,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E120B969286F4AEE00C70F46 /* Extensions.swift in Sources */,
+				E120B966286F46B800C70F46 /* KeyDerivation.swift in Sources */,
 				E1378B8828460D4C00BBE5B4 /* RnCrypto.swift in Sources */,
 				E1378B8728460D4800BBE5B4 /* EncryptFileOperation.swift in Sources */,
+				E1778809286B61480000BE60 /* HMAC.swift in Sources */,
 				E1378B8628460D4500BBE5B4 /* DecryptFileOperation.swift in Sources */,
 				E1378B8528460D3700BBE5B4 /* RnCryptoUtils.swift in Sources */,
 				E1378B8428460D3300BBE5B4 /* AesCipher.swift in Sources */,
@@ -330,6 +345,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E170E623286F33B10014EF09 /* KeyDerivationTest.swift in Sources */,
 				E160A3432847D43E00B59260 /* IDZSwiftCommonCrypto.framework in Sources */,
 				E160A3422847AB0800B59260 /* RnCryptoUtilsTest.swift in Sources */,
 				E136EF3B28456DFE0002609B /* AesCipherTest.swift in Sources */,
@@ -350,6 +366,7 @@
 		58B511ED1A9E6C8500147676 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -401,6 +418,7 @@
 		58B511EE1A9E6C8500147676 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -444,8 +462,9 @@
 		};
 		58B511F01A9E6C8500147676 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 4A28B817060F96FC339C868C /* Pods-RnCrypto.debug.xcconfig */;
+			baseConfigurationReference = 8FAA9B2BED5502B93D307A8D /* Pods-RnCrypto.debug.xcconfig */;
 			buildSettings = {
+				"EXCLUDED_ARCHS[sdk=*]" = arm64;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
@@ -467,7 +486,7 @@
 		};
 		58B511F11A9E6C8500147676 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1CA21572FED786844E10EF3A /* Pods-RnCrypto.release.xcconfig */;
+			baseConfigurationReference = BA209EAEB8B1B16A3E451990 /* Pods-RnCrypto.release.xcconfig */;
 			buildSettings = {
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -489,7 +508,7 @@
 		};
 		E1E09E252844E235001050F7 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = FDF0F93F5BD0427BDA93850A /* Pods-RnCrypto-RnCryptoTests.debug.xcconfig */;
+			baseConfigurationReference = 4B6F46640B9A292C519C07B3 /* Pods-RnCrypto-RnCryptoTests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -526,7 +545,7 @@
 		};
 		E1E09E262844E235001050F7 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3CA0EDD88509E9771E5AF02D /* Pods-RnCrypto-RnCryptoTests.release.xcconfig */;
+			baseConfigurationReference = 58B005432DC7DBF1DADEDB3C /* Pods-RnCrypto-RnCryptoTests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ANALYZER_NONNULL = YES;
