@@ -19,7 +19,6 @@ class AesCipher {
     // Encrypts an input stream to an output stream given a key and an IV
     // using AES256 CTR mode with No padding
     public func encrypt(input: InputStream, output:OutputStream, key: [UInt8], iv: [UInt8] ,callback: (_:RnCryptoError?, _: Status?) -> Void ) -> Void {
-        do {
             let algorithm = StreamCryptor.Algorithm.aes
             
             
@@ -71,9 +70,6 @@ class AesCipher {
             output.close();
             
             callback(nil,status)
-        } catch let error {
-            callback(RnCryptoError.encryptionFailed,Status.decodeError)
-        }
         
         
     }

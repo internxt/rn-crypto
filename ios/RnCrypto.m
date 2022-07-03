@@ -12,10 +12,23 @@ RCT_EXTERN_METHOD(encryptFile:
                   callback:(RCTResponseSenderBlock)callback)
 
 RCT_EXTERN_METHOD(decryptFile:
-                  (NSString*)encryptedFilePath
+                  (NSString *)encryptedFilePath
                   plainFilePath:(NSString*)plainFilePath
                   hexKey:(NSString*)hexKey
                   hexIv:(NSString*)hexIv
                   callback:(RCTResponseSenderBlock)callback)
 
+RCT_EXTERN_METHOD(sha512:
+                  (NSArray*)inputs
+                  resolver:(RCTPromiseResolveBlock)resolve)
+
+RCT_EXTERN_METHOD(sha256:
+                  (NSArray*)inputs
+                  resolver:(RCTPromiseResolveBlock)resolve)
+
+
++ (BOOL)requiresMainQueueSetup
+{
+    return NO;
+}
 @end

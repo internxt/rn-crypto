@@ -45,33 +45,29 @@ class EncryptFileOperation : Operation {
     
     override func main() {
         
-        do {
-            
-            if self.plainFileStream == nil {
-                return self.callback(RnCryptoError.plainFile)
-            }
-            
-            if self.encryptedFileStream == nil {
-                return self.callback(RnCryptoError.encryptedFile)
-            }
-            
-            let iv = self.utils.hexStringToBytes(self.hexIv)
-            let key = self.utils.hexStringToBytes(self.hexKey)
-            
-            
-            self.aes.encrypt(
-                input: self.plainFileStream!,
-                output: self.encryptedFileStream!,
-                key: key,
-                iv: iv,
-                callback: {(error, status) in
-                    self.callback(error)
-                }
-            )
-        } catch let error {
-            print("Error encrypting file", error);
-            self.callback(error)
+        
+        if self.plainFileStream == nil {
+            return self.callback(RnCryptoError.plainFile)
         }
         
+        if self.encryptedFileStream == nil {
+            return self.callback(RnCryptoError.encryptedFile)
+        }
+        
+        let iv = self.utils.hexStringToBytes(self.hexIv)
+        let key = self.utils.hexStringToBytes(self.hexKey)
+        
+        
+        self.aes.encrypt(
+            input: self.plainFileStream!,
+            output: self.encryptedFileStream!,
+            key: key,
+            iv: iv,
+            callback: {(error, status) in
+                self.callback(error)
+            }
+        )
+        
     }
+    
 }

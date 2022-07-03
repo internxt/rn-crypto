@@ -15,15 +15,7 @@ import XCTest
 class RnCryptoUtilsTest: XCTestCase {
     let sut = RnCryptoUtils()
  
-    
-    func testHexStringToBytesFail() throws {
-        // Throws a fatalError if string cannot be converted to bytes
-        expectFatalError(expectedMessage: "convertHexDigit: Invalid hex digit") {
-            self.sut.hexStringToBytes("imnotahexstring")
-        }
-       
-    }
-    
+        
     
     func test16bytesHexStringToBytes() throws {
         let bytes = sut.hexStringToBytes("717cdf366fdcc9ce5e8c953c0e7327aa")
@@ -36,6 +28,13 @@ class RnCryptoUtilsTest: XCTestCase {
         let bytes = sut.hexStringToBytes("278c30e05408d726737448525f41386c57d7b256973d8e5c1e5cd3f34073b9f0")
         let expectedBytes: [UInt8] = [39, 140, 48, 224, 84, 8, 215, 38, 115, 116, 72, 82, 95, 65, 56, 108, 87, 215, 178, 86, 151, 61, 142, 92, 30, 92, 211, 243, 64, 115, 185, 240]
         XCTAssertEqual(bytes, expectedBytes)
+    }
+    
+    
+    func testBytesToHexString() throws {
+        let hex = sut.bytesToHexString([39, 140, 48, 224, 84, 8, 215, 38, 115, 116, 72, 82, 95, 65, 56, 108, 87, 215, 178, 86, 151, 61, 142, 92, 30, 92, 211, 243, 64, 115, 185, 240])
+        let expectedHex = "278c30e05408d726737448525f41386c57d7b256973d8e5c1e5cd3f34073b9f0"
+        XCTAssertEqual(hex, expectedHex)
     }
   
 
