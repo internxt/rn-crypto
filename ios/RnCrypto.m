@@ -18,6 +18,13 @@ RCT_EXTERN_METHOD(decryptFile:
                   hexIv:(NSString*)hexIv
                   callback:(RCTResponseSenderBlock)callback)
 
+RCT_EXTERN_METHOD(pbkdf2:
+                  (NSString*) password
+                  salt: (NSString*) salt
+                  rounds: (NSNumber*) rounds
+                  derivedKeyLength: (NSNumber*) derivedKeyLength
+                  resolver: (RCTResponseSenderBlock) resolve)
+
 RCT_EXTERN_METHOD(sha512:
                   (NSArray*)inputs
                   resolver:(RCTPromiseResolveBlock)resolve)
