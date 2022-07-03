@@ -9,7 +9,8 @@ class RnCrypto: NSObject {
     var decryptionQueue = OperationQueue()
     var utils = RnCryptoUtils()
     var HMAC = RnCryptoHMAC()
-    
+    var keyDerivation = RnCryptoKeyDerivation()
+
     func load() {
         encryptionQueue.name = "EncryptionQueue"
         decryptionQueue.name = "DecryptionQueue"
@@ -47,6 +48,16 @@ class RnCrypto: NSObject {
         return resolve(result.description.hex)
     }
     
+    @objc func pbkdf2(_ password: String, salt: String, rounds: Int, derivedKeyLength: Int, resolve: RCTPromiseResolveBlock) {
+        let result = keyDerivation.pbkdf2(
+            password: password,
+            salt: salt,
+            rounds: rounds,
+            derivedKeyLength: derivedKeyLength
+        )
+        return resolve(utils.bytesToHexString(_:result))
+    }
+    
     @objc func encryptFile(
         _ plainFilePath: String,
         encryptedFilePath: String,
@@ -73,6 +84,7 @@ class RnCrypto: NSObject {
         self.encryptionQueue.addOperation(operation)
         
     }
+    
     
     
     @objc func decryptFile(

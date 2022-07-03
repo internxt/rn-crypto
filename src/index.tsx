@@ -1,5 +1,6 @@
 import { NativeModules, Platform } from 'react-native';
-
+import { HMAC, UpdatableHash } from './types/crypto';
+import { Buffer } from 'buffer';
 const LINKING_ERROR =
   `The package 'rn-crypto' doesn't seem to be linked. Make sure: \n\n` +
   Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
@@ -75,4 +76,70 @@ export function decryptFile(
   cb: (err: Error) => void
 ): void {
   RnCrypto.decryptFile(encryptedFilePath, plainFilePath, hexKey, hexIv, cb);
+}
+
+function getNativeHMAC(hmac: HMAC) {
+  if (hmac === HMAC.sha256) {
+    return RnCrypto.sha256;
+  }
+
+  if (hmac === HMAC.sha512) {
+    return RnCrypto.sha512;
+  }
+}
+
+/**
+ * Creates a pbkdf2 key derivation
+ *
+ * @param password Password to use
+ * @param salt Salt to use
+ * @param rounds Rounds
+ * @param derivedKeyLength Length of the derived key
+ * @returns A buffer containing the result
+ */
+export async function pbkdf2(
+  password: string,
+  salt: string,
+  rounds: number,
+  derivedKeyLength: number
+): Promise<Buffer> {
+  const result = await RnCrypto.pbkdf2(
+    password,
+    salt,
+    rounds,
+    derivedKeyLength
+  );
+  return Buffer.from(result, 'hex');
+}
+/**
+ * Creates a hash that can be updated
+ * during the creation
+ *
+ * @param hmac HMAC to use
+ * @returns A buffer containing the final hash
+ */
+export function createHash(hmac: HMAC): UpdatableHash {
+  const values: string[] = [];
+  const digest = async () => {
+    const nativeHmac = getNativeHMAC(hmac);
+    const hexResult = await nativeHmac(values);
+    return Buffer.from(hexResult, 'hex');
+  };
+  const update = (value: Buffer | string) => {
+    if (typeof value === 'string') {
+      values.push(Buffer.from(value).toString('hex'));
+    } else {
+      values.push(value.toString('hex'));
+    }
+
+    return {
+      update,
+      digest,
+    };
+  };
+
+  return {
+    update,
+    digest,
+  };
 }
