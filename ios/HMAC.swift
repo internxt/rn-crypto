@@ -7,29 +7,50 @@
 //
 
 import Foundation
-import IDZSwiftCommonCrypto
-
+import CryptoKit
 
 enum HashInput {
     case message ([UInt8])
     case messages (Array<[UInt8]>)
 }
+
+@available(iOS 13.0, *)
 class RnCryptoHMAC {
-    func sha256(inputs: Array<[UInt8]> ) -> [UInt8] {
-        return toAlgorithm(inputs: inputs, algorithm: HMAC.Algorithm.sha256)
-    }
+
     
     func sha512(inputs: Array<[UInt8]>) -> [UInt8] {
-        return toAlgorithm(inputs: inputs, algorithm: HMAC.Algorithm.sha512)
+        
+        var hash = SHA512.init()
+        for (_, input) in inputs.enumerated() {
+            hash.update(data: input)
+        }
+        
+        let digest = hash.finalize()
+        var result = [UInt8]()
+        digest.withUnsafeBytes {bytes in
+            result.append(contentsOf: bytes)
+        }
+        
+        return result
     }
     
-    private func toAlgorithm(inputs: Array<[UInt8]>, algorithm: HMAC.Algorithm) -> [UInt8] {
-        let hash = HMAC(algorithm: algorithm, key: inputs[0])
-        for (index, message) in inputs.enumerated() {
-            if index > 0 {
-                _ = hash.update(message)
-            }
+    func sha256(inputs: Array<[UInt8]>) -> [UInt8] {
+        
+        var hash = SHA256.init()
+        for (_, input) in inputs.enumerated() {
+            hash.update(data: input)
         }
-        return hash.final()
+        
+        let digest = hash.finalize()
+        var result = [UInt8]()
+        digest.withUnsafeBytes {bytes in
+            result.append(contentsOf: bytes)
+        }
+        
+        return result
     }
+    
+   
+    
+    
 }

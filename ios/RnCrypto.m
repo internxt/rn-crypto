@@ -21,17 +21,23 @@ RCT_EXTERN_METHOD(decryptFile:
 RCT_EXTERN_METHOD(pbkdf2:
                   (NSString*) password
                   salt: (NSString*) salt
-                  rounds: (NSNumber*) rounds
-                  derivedKeyLength: (NSNumber*) derivedKeyLength
-                  resolver: (RCTResponseSenderBlock) resolve)
+                  rounds: (nonnull NSNumber*) rounds
+                  derivedKeyLength: (nonnull NSNumber*) derivedKeyLength
+                  resolve: (RCTPromiseResolveBlock) resolve
+                  reject: (RCTPromiseRejectBlock) reject
+                  )
 
 RCT_EXTERN_METHOD(sha512:
                   (NSArray*)inputs
-                  resolver:(RCTPromiseResolveBlock)resolve)
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject: (RCTPromiseRejectBlock) reject
+                  )
 
 RCT_EXTERN_METHOD(sha256:
                   (NSArray*)inputs
-                  resolver:(RCTPromiseResolveBlock)resolve)
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject: (RCTPromiseRejectBlock) reject
+                  )
 
 
 + (BOOL)requiresMainQueueSetup
@@ -39,3 +45,4 @@ RCT_EXTERN_METHOD(sha256:
     return NO;
 }
 @end
+
