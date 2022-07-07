@@ -4,18 +4,26 @@ import android.os.Environment;
 
 import androidx.annotation.NonNull;
 
+import com.facebook.common.util.Hex;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.module.annotations.ReactModule;
 import com.rncrypto.util.CryptoService;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 @ReactModule(name = RnCryptoModule.NAME)
 public class RnCryptoModule extends ReactContextBaseJavaModule {
@@ -144,12 +152,57 @@ public class RnCryptoModule extends ReactContextBaseJavaModule {
     );
   }
 
-  // Example method
-  // See https://reactnative.dev/docs/native-modules-android
   @ReactMethod
-  public void multiply(int a, int b, Promise promise) {
-    promise.resolve(a * b);
+  public void sha256() {
+
   }
 
-  public static native int nativeMultiply(int a, int b);
+  @ReactMethod
+  public void sha512(ReadableArray inputs, Promise promise) {
+    List<byte[]> byteInputs = new ArrayList<byte[]>();
+
+    for (int i = 0; i < inputs.size(); i++) {
+      byteInputs.add(Hex.decodeHex(inputs.getString(i)));
+    }
+
+    try {
+      byte[] result = CryptoService
+        .getInstance().sha512(byteInputs);
+
+      promise.resolve(Hex.encodeHex(result,false));
+    } catch (NoSuchAlgorithmException e) {
+      e.printStackTrace();
+      promise.reject("NO_ALGORITHM",e.getMessage());
+    }
+
+  }
+
+
+  @ReactMethod
+  public void pbkdf2(
+    String password,
+    String salt,
+    Double rounds,
+    Double derivedKeyLength,
+    Promise promise
+  ) {
+
+    try {
+      byte[] result = CryptoService
+        .getInstance()
+        .pbkdf2(password, salt.getBytes(),rounds.intValue(), derivedKeyLength.intValue());
+
+
+      promise.resolve(Hex.encodeHex(result, false));
+    } catch (NoSuchAlgorithmException e) {
+      e.printStackTrace();
+      promise.reject("NO_ALGORITHM",e.getMessage());
+
+    } catch (InvalidKeySpecException e) {
+      e.printStackTrace();
+      promise.reject("INVALID_KEY_SPEC",e.getMessage());
+    }
+
+  }
+
 }

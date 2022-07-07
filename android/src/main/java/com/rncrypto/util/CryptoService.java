@@ -5,7 +5,16 @@ import com.rncrypto.DecryptFileRepository;
 import com.rncrypto.EncryptFileRepository;
 import com.rncrypto.ThreadPerTaskExecutor;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
+import java.sql.Array;
+import java.util.List;
+
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
 
 public class CryptoService {
   private static CryptoService instance = null;
@@ -108,5 +117,26 @@ public class CryptoService {
         onlyErrorCallback
       );
     }
+  }
+
+
+  public byte[] pbkdf2(String password, byte[] salt, int rounds, int derivedKeyLength) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    PBEKeySpec spec = new PBEKeySpec(password.toCharArray(), salt, rounds,
+      derivedKeyLength * 8);
+    SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512");
+    SecretKey key = factory.generateSecret(spec);
+    return key.getEncoded();
+  }
+
+
+  public byte[] sha512(List<byte[]> inputs) throws NoSuchAlgorithmException {
+    MessageDigest md = MessageDigest.getInstance("SHA-512");
+
+    for(byte[] input: inputs) {
+      md.update(input);
+    }
+
+    return md.digest();
+
   }
 }
