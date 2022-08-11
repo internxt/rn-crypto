@@ -31,7 +31,7 @@ class RnCrypto: NSObject {
 
         let result = HMAC.sha256(inputs: byteInputs)
 
-        return resolve(result.description.hex)
+        return resolve(utils.bytesToHexString(_:result))
     }
     
     @available(iOS 13.0, *)
@@ -49,7 +49,7 @@ class RnCrypto: NSObject {
         
         let result = HMAC.sha512(inputs: byteInputs)
         
-        return resolve(result.description.hex)
+        return resolve(utils.bytesToHexString(_:result))
     }
     
     @objc func pbkdf2(

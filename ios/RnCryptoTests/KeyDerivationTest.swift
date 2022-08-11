@@ -22,8 +22,5 @@ class KeyDerivation: XCTestCase {
         
         XCTAssertEqual(utils.bytesToHexString(result), "23c999c8753e1deec3aa8638cd4407f241b0184ad35f7b71be9af5266e6ad31c8025a88e1fe92a03a3815fa35d1b823294f6b4ba79619d52b911f215fe56ae24")
         
-    }
-
-    
-
+    }    
 }
