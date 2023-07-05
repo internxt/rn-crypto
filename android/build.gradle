@@ -19,10 +19,10 @@ def safeExtGet(prop, fallback) {
 }
 
 android {
-    compileSdkVersion safeExtGet('RnCrypto_compileSdkVersion', 29)
+    compileSdkVersion safeExtGet('RnCrypto_compileSdkVersion', 31)
     defaultConfig {
         minSdkVersion safeExtGet('RnCrypto_minSdkVersion', 23)
-        targetSdkVersion safeExtGet('RnCrypto_targetSdkVersion', 29)
+        targetSdkVersion safeExtGet('RnCrypto_targetSdkVersion', 31)
         versionCode 1
         versionName "1.0"
 
