@@ -16,8 +16,7 @@ class RnCrypto: NSObject {
         encryptionQueue.name = "EncryptionQueue"
         decryptionQueue.name = "DecryptionQueue"
     }
-    
-    
+
     @objc func sha256(
         _ inputs: NSArray,
         resolve: RCTPromiseResolveBlock,
@@ -33,7 +32,7 @@ class RnCrypto: NSObject {
 
         return resolve(utils.bytesToHexString(_:result))
     }
-    
+
     @available(iOS 13.0, *)
     @objc func sha512(
         _ inputs: NSArray,
@@ -46,12 +45,12 @@ class RnCrypto: NSObject {
             }
             return utils.hexStringToBytes(input)
         } as Array<[UInt8]>
-        
+
         let result = HMAC.sha512(inputs: byteInputs)
-        
+
         return resolve(utils.bytesToHexString(_:result))
     }
-    
+
     @objc func pbkdf2(
         _ password: String,
         salt: String,
@@ -68,7 +67,7 @@ class RnCrypto: NSObject {
         )
         return resolve(utils.bytesToHexString(_:result))
     }
-    
+
     @objc func encryptFile(
         _ plainFilePath: String,
         encryptedFilePath: String,
@@ -76,8 +75,7 @@ class RnCrypto: NSObject {
         hexIv: String,
         callback: @escaping RCTResponseSenderBlock
     ) -> Void {
-        
-        
+
         let operation = EncryptFileOperation(
             plainFilePath: URL(fileURLWithPath: plainFilePath),
             encryptedFilePath: URL(fileURLWithPath: encryptedFilePath),
@@ -93,11 +91,9 @@ class RnCrypto: NSObject {
         )
 
         self.encryptionQueue.addOperation(operation)
-        
+
     }
-    
-    
-    
+
     @objc func decryptFile(
         _ encryptedFilePath: String,
         plainFilePath: String,
@@ -105,8 +101,6 @@ class RnCrypto: NSObject {
         hexIv: String,
         callback: @escaping RCTResponseSenderBlock
     ) -> Void {
-        
-        
         let operation = DecryptFileOperation(
             encryptedFilePath: URL(fileURLWithPath: encryptedFilePath),
             plainFilePath: URL(fileURLWithPath: plainFilePath),
@@ -124,6 +118,63 @@ class RnCrypto: NSObject {
         self.decryptionQueue.addOperation(operation)
     }
 
+    @objc func joinFiles(
+        _ inputFiles: [String],
+        outputFile: String,
+        callback: @escaping RCTResponseSenderBlock
+    ) {
+        let fileManager = FileManager.default
+        let outputURL = URL(fileURLWithPath: outputFile)
+        do {
+            if fileManager.fileExists(atPath: outputFile) {
+                try fileManager.removeItem(at: outputURL)
+            }
+            fileManager.createFile(atPath: outputFile, contents: nil, attributes: nil)
+            guard let outputStream = OutputStream(url: outputURL, append: true) else {
+                callback(["Unable to create output stream for: \(outputFile)"])
+                return
+            }
+            outputStream.open()
+            defer {
+                outputStream.close()
+            }
+            let bufferSize = 4096
+            var buffer = [UInt8](repeating: 0, count: bufferSize)
+
+            for inputFile in inputFiles {
+                let inputURL = URL(fileURLWithPath: inputFile)
+                guard let inputStream = InputStream(url: inputURL) else {
+                    callback(["Unable to create input stream for: \(inputFile)"])
+                    return
+                }
+                inputStream.open()
+                defer {
+                    inputStream.close()
+                    do {
+                        try fileManager.removeItem(atPath: inputFile)
+                    } catch {
+                    }
+                }
+
+                while inputStream.hasBytesAvailable {
+                    let bytesRead = inputStream.read(&buffer, maxLength: bufferSize)
+                    if bytesRead > 0 {
+                        let bytesWritten = outputStream.write(buffer, maxLength: bytesRead)
+                        if bytesWritten < 0 {
+                            callback(["Error writing to output file: \(outputFile)"])
+                            return
+                        }
+                    } else if bytesRead < 0 {
+                        callback(["Error reading from file: \(inputFile)"])
+                        return
+                    }
+                }
+            }
+            callback([NSNull(), "Files successfully combined in: \(outputFile)"])
+        } catch let error {
+            callback([error.localizedDescription])
+        }
+    }
 
     @objc func requiresMainQueueSetup() -> Bool {
         return false

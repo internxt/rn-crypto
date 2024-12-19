@@ -38,6 +38,10 @@ RCT_EXTERN_METHOD(sha256:
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject: (RCTPromiseRejectBlock) reject
                   )
+RCT_EXTERN_METHOD(joinFiles:
+                  (NSArray*)inputFiles
+                  outputFile:(NSString*)outputFile
+                  callback:(RCTResponseSenderBlock)callback)
 
 
 + (BOOL)requiresMainQueueSetup

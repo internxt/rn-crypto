@@ -24,6 +24,9 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 @ReactModule(name = RnCryptoModule.NAME)
 public class RnCryptoModule extends ReactContextBaseJavaModule {
@@ -87,7 +90,7 @@ public class RnCryptoModule extends ReactContextBaseJavaModule {
   }
 
   /**
-   * Encrypts a file in background.
+   * Encrypts a file in background
    *
    * @param sourcePath      Path where file is located
    * @param destinationPath Path where encrypted file is going to be written
@@ -150,6 +153,44 @@ public class RnCryptoModule extends ReactContextBaseJavaModule {
         }
       }
     );
+  }
+
+ @ReactMethod
+  public void joinFiles(ReadableArray inputFiles, String outputFile, Callback cb) {
+    FileOutputStream outputStream = null;
+    try {
+      outputStream = new FileOutputStream(outputFile, true);
+      for (int i = 0; i < inputFiles.size(); i++) {
+          String inputFile = inputFiles.getString(i);
+          FileInputStream inputStream = null;
+          try {
+              inputStream = new FileInputStream(inputFile);
+              byte[] buffer = new byte[8192];
+              int bytesRead;
+              while ((bytesRead = inputStream.read(buffer)) != -1) {
+                  outputStream.write(buffer, 0, bytesRead);
+              }
+          } finally {
+              if (inputStream != null) {
+                  inputStream.close();
+              }
+
+              try {
+                  new File(inputFile).delete();
+              } catch (Exception e) {
+              }
+          }
+      }
+      cb.invoke((Object) null);
+    } catch (IOException e) {
+        cb.invoke(e.getMessage());
+    } finally {
+        try {
+            if (outputStream != null) outputStream.close();
+        } catch (IOException e) {
+          cb.invoke("Error closing output file: " + e.getMessage());
+        }
+    }
   }
 
   @ReactMethod
