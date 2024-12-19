@@ -43,7 +43,7 @@ export function listDir(dir: string): Promise<FileEntry[]> {
 }
 
 /**
- * Encrypts a given file in AES256-CTR writing it encrypted on the encryptedFilePath - modified
+ * Encrypts a given file in AES256-CTR writing it encrypted on the encryptedFilePath
  * @param plainFilePath Path where file is located
  * @param encryptedFilePath Path where file encrypted is going to be written
  * @param hexKey Encryption key in hex format
