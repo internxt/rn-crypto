@@ -1,12 +1,11 @@
 import { Buffer } from 'buffer';
 import { NativeModules, Platform } from 'react-native';
-import { HMAC, UpdatableHash } from './types/crypto';
+import { HMAC } from './types/crypto';
 const LINKING_ERROR =
   `The package 'rn-crypto' doesn't seem to be linked. Make sure: \n\n` +
   Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
   '- You rebuilt the app after installing the package\n' +
   '- You are not using Expo managed workflow\n';
-
 const RnCrypto = NativeModules.RnCrypto
   ? NativeModules.RnCrypto
   : new Proxy(
@@ -17,31 +16,18 @@ const RnCrypto = NativeModules.RnCrypto
         },
       }
     );
-
-export function multiply(a: number, b: number): Promise<number> {
+export function multiply(a, b) {
   return RnCrypto.multiply(a, b);
 }
-
-interface FileEntry {
-  mtime: number;
-  name: string;
-  path: string;
-  size: number;
-  type: number;
-}
-
-export function getDocumentsPath(): Promise<string> {
+export function getDocumentsPath() {
   return RnCrypto.getDocumentsPath();
 }
-
-export function getDownloadsPath(): Promise<string> {
+export function getDownloadsPath() {
   return RnCrypto.getDownloadsPath();
 }
-
-export function listDir(dir: string): Promise<FileEntry[]> {
+export function listDir(dir) {
   return RnCrypto.listDir(dir);
 }
-
 /**
  * Encrypts a given file in AES256-CTR writing it encrypted on the encryptedFilePath
  * @param plainFilePath Path where file is located
@@ -51,15 +37,14 @@ export function listDir(dir: string): Promise<FileEntry[]> {
  * @param cb Only error callback
  */
 export function encryptFile(
-  plainFilePath: string,
-  encryptedFilePath: string,
-  hexKey: string,
-  hexIv: string,
-  cb: (err: Error) => void
-): void {
+  plainFilePath,
+  encryptedFilePath,
+  hexKey,
+  hexIv,
+  cb
+) {
   RnCrypto.encryptFile(plainFilePath, encryptedFilePath, hexKey, hexIv, cb);
 }
-
 /**
  * Decrypts a given encrypted file, writing it decrypted on the plainFilePath
  * @param encryptedFilePath Path where encrypted file is located
@@ -69,40 +54,26 @@ export function encryptFile(
  * @param cb Only error callback
  */
 export function decryptFile(
-  encryptedFilePath: string,
-  plainFilePath: string,
-  hexKey: string,
-  hexIv: string,
-  cb: (err: Error) => void
-): void {
+  encryptedFilePath,
+  plainFilePath,
+  hexKey,
+  hexIv,
+  cb
+) {
   RnCrypto.decryptFile(encryptedFilePath, plainFilePath, hexKey, hexIv, cb);
 }
-
-/**
- * Joins multiple input files into a single output file
- *
- * @param inputFiles Array of input file paths to be joined
- * @param outputFile Destination file path where files will be combined
- * @returns A promise that resolves with a success message
- */
-export function joinFiles(
-  inputFiles: string[],
-  outputFile: string,
-  callback: (err: Error) => void
-): void {
-  return RnCrypto.joinFiles(inputFiles, outputFile, callback);
-}
-
-function getNativeHMAC(hmac: HMAC) {
+function getNativeHMAC(hmac) {
   if (hmac === HMAC.sha256) {
     return RnCrypto.sha256;
   }
-
   if (hmac === HMAC.sha512) {
     return RnCrypto.sha512;
   }
 }
 
+export function joinFiles(inputFiles, outputFile) {
+  return RnCrypto.joinFiles(inputFiles, outputFile);
+}
 /**
  * Creates a pbkdf2 key derivation
  *
@@ -112,12 +83,7 @@ function getNativeHMAC(hmac: HMAC) {
  * @param derivedKeyLength Length of the derived key
  * @returns A buffer containing the result
  */
-export async function pbkdf2(
-  password: string,
-  salt: string,
-  rounds: number,
-  derivedKeyLength: number
-): Promise<Buffer> {
+export async function pbkdf2(password, salt, rounds, derivedKeyLength) {
   const result = await RnCrypto.pbkdf2(
     password,
     salt,
@@ -133,26 +99,24 @@ export async function pbkdf2(
  * @param hmac HMAC to use
  * @returns A buffer containing the final hash
  */
-export function createHash(hmac: HMAC): UpdatableHash {
-  const values: string[] = [];
+export function createHash(hmac) {
+  const values = [];
   const digest = async () => {
     const nativeHmac = getNativeHMAC(hmac);
     const hexResult = await nativeHmac(values);
     return Buffer.from(hexResult, 'hex');
   };
-  const update = (value: Buffer | string) => {
+  const update = (value) => {
     if (typeof value === 'string') {
       values.push(Buffer.from(value).toString('hex'));
     } else {
       values.push(value.toString('hex'));
     }
-
     return {
       update,
       digest,
     };
   };
-
   return {
     update,
     digest,
