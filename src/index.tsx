@@ -90,9 +90,6 @@ export function joinFiles(
   outputFile: string,
   callback: (err: Error) => void
 ): void {
-  console.log('input files ', inputFiles);
-  console.log('output files ', outputFile);
-
   return RnCrypto.joinFiles(inputFiles, outputFile, callback);
 }
 
