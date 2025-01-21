@@ -71,6 +71,33 @@ function getNativeHMAC(hmac) {
   }
 }
 
+/**
+ * Encrypts a file into multiple chunks using AES256-CTR
+ * @param {string} plainFilePath Path where the source file is located
+ * @param {string[]} encryptedFilePaths Array of paths where encrypted chunks will be written
+ * @param {string} hexKey Encryption key in hex format
+ * @param {string} hexIv IV in hex format
+ * @param {number} chunkSize Size of each chunk in bytes
+ * @param {function} cb Callback function that receives an error if one occurs
+ */
+export function encryptFileToChunks(
+  plainFilePath,
+  encryptedFilePaths,
+  hexKey,
+  hexIv,
+  chunkSize,
+  cb
+) {
+  RnCrypto.encryptFileToChunks(
+    plainFilePath,
+    encryptedFilePaths,
+    hexKey,
+    hexIv,
+    chunkSize,
+    cb
+  );
+}
+
 export function joinFiles(inputFiles, outputFile) {
   return RnCrypto.joinFiles(inputFiles, outputFile);
 }
