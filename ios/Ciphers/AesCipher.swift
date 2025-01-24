@@ -88,8 +88,7 @@ class AesCipher {
     callback: (_ error: RnCryptoError?, _ status: Status?) -> Void
   ) {
     let algorithm = StreamCryptor.Algorithm.aes
-    let bufferSize: Int = 1024 * 8  // Reduced to 8KB like in encrypt()
-
+    let bufferSize: Int = 1024 * 8
     guard isValidIv(iv: iv) else {
       return callback(.badIv, nil)
     }
@@ -105,9 +104,7 @@ class AesCipher {
 
     var inputBuffer = [UInt8](repeating: 0, count: bufferSize)
     var outputBuffer = [UInt8](repeating: 0, count: bufferSize)
-
     input.open()
-
     var encryptedBytes: Int = 0
     var chunkIndex = 0
     var bytesWrittenInChunk = 0
@@ -125,11 +122,24 @@ class AesCipher {
 
     outputs.forEach { $0.open() }
 
+    //Abstraida la logica de escribir bytes en un chunk
+    func writeBytes(from buffer: [UInt8], offset: Int, length: Int) -> (
+      bytesWritten: Int, error: RnCryptoError?
+    ) {
+      if chunkIndex >= outputs.count {
+        return (0, .writeFailed)
+      }
+      let bytesOut = outputs[chunkIndex].write(
+        Array(buffer[offset..<(offset + length)]), maxLength: length)
+      if bytesOut <= 0 {
+        return (0, .writeFailed)
+      }
+      return (bytesOut, nil)
+    }
+
     while input.hasBytesAvailable {
       let bytesRead = input.read(&inputBuffer, maxLength: inputBuffer.count)
-      if bytesRead <= 0 {
-        break
-      }
+      if bytesRead <= 0 { break }
 
       let status = cryptStream.update(
         bufferIn: inputBuffer,
@@ -146,27 +156,25 @@ class AesCipher {
       var offset = 0
       var remainingBytes = encryptedBytes
 
+      // Dentro del while estan los cambios
       while remainingBytes > 0 {
-        if chunkIndex >= outputs.count {
-          return callback(.writeFailed, nil)
-        }
-
-        let currentOutput = outputs[chunkIndex]
         let spaceLeftInChunk = chunkSize - bytesWrittenInChunk
         let bytesToWrite = min(remainingBytes, spaceLeftInChunk)
 
-        // Write using array slice
-        let bytesOut = currentOutput.write(
-          Array(outputBuffer[offset..<(offset + bytesToWrite)]), maxLength: bytesToWrite)
-        if bytesOut <= 0 {
-          return callback(.writeFailed, nil)
+        let (bytesWritten, error) = writeBytes(
+          from: outputBuffer, offset: offset, length: bytesToWrite)
+        if let error = error {
+          return callback(error, nil)
         }
-
-        offset += bytesToWrite
-        remainingBytes -= bytesToWrite
-        bytesWrittenInChunk += bytesToWrite
-        totalBytesProcessed += Int64(bytesOut)
-
+        //De esta forma se actualiza el offset y los bytes restantes con los que se han escrito en el chunk
+        // y en la proxima iteracion se escribiran los bytes restantes
+        offset += bytesWritten
+        remainingBytes -= bytesWritten
+        bytesWrittenInChunk += bytesWritten
+        totalBytesProcessed += Int64(bytesWritten)
+        // aqui actualizamos el chunkIndex y reiniciarmos bytersWrittenInChunk
+        // asi como todavia hay remainingBytes por escribir se escriben en el siguiente chunk
+        // y depues se continua
         if bytesWrittenInChunk >= chunkSize {
           chunkIndex += 1
           bytesWrittenInChunk = 0
@@ -181,15 +189,10 @@ class AesCipher {
     )
 
     if finalStatus == .success && encryptedBytes > 0 {
-      if chunkIndex < outputs.count {
-        let currentOutput = outputs[chunkIndex]
-        let bytesOut = currentOutput.write(outputBuffer, maxLength: encryptedBytes)
-        if bytesOut <= 0 {
-          return callback(.writeFailed, nil)
-        }
-        totalBytesProcessed += Int64(bytesOut)
-      } else {
-        return callback(.writeFailed, nil)
+      // esto tambien ha cambiado para utilizar la funcion de escribir par escribir los ulitmos bytes
+      let (_, error) = writeBytes(from: outputBuffer, offset: 0, length: encryptedBytes)
+      if let error = error {
+        return callback(error, nil)
       }
     }
 
