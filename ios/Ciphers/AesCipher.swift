@@ -87,8 +87,18 @@ class AesCipher {
     chunkSize: Int,
     callback: (_ error: RnCryptoError?, _ status: Status?) -> Void
   ) {
+    guard chunkSize > 0 else {
+      return callback(.badInput, nil)
+    }
+
+    // To prevent integer overflow in later calculations
+    guard Int.max - chunkSize > 0 else {
+      return callback(.badInput, nil)
+    }
+
     let algorithm = StreamCryptor.Algorithm.aes
     let bufferSize: Int = 1024 * 8
+
     guard isValidIv(iv: iv) else {
       return callback(.badIv, nil)
     }
@@ -138,7 +148,12 @@ class AesCipher {
 
     while input.hasBytesAvailable {
       let bytesRead = input.read(&inputBuffer, maxLength: inputBuffer.count)
-      if bytesRead <= 0 { break }
+
+      if bytesRead < 0 {
+        return callback(.readFailed, nil)
+      } else if bytesRead == 0 {
+        break
+      }
 
       let status = cryptStream.update(
         bufferIn: inputBuffer,
@@ -183,8 +198,11 @@ class AesCipher {
       byteCountOut: &encryptedBytes
     )
 
-    if finalStatus == .success && encryptedBytes > 0 {
+    guard finalStatus == .success else {
+      return callback(.encryptionFailed, finalStatus)
+    }
 
+    if encryptedBytes > 0 {
       let (_, error) = writeBytes(from: outputBuffer, offset: 0, length: encryptedBytes)
       if let error = error {
         return callback(error, nil)

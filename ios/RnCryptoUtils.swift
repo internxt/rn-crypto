@@ -40,4 +40,6 @@ enum RnCryptoError: Error {
     case fileCreationFailed
     case writeFailed
     case outputStreams
+    case readFailed
+    case badInput
 }
