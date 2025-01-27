@@ -487,4 +487,133 @@ class AesCipherTest: XCTestCase {
       
       wait(for: [expectation], timeout: 5.0)
   }
+  
+  func testNegativeChunkSize() {
+        let testData = Array(repeating: UInt8(1), count: 100)
+        let partSize = -10
+        
+        let inputStream = InputStream(data: Data(testData))
+        let outputStreams = [OutputStream(toMemory: ())]
+        
+        inputStream.open()
+        outputStreams.forEach { $0.open() }
+        
+        let expectation = XCTestExpectation(description: "Negative chunk size")
+        var encryptError: RnCryptoError?
+        
+        sut.encryptToChunks(
+            input: inputStream,
+            outputs: outputStreams,
+            key: validKey,
+            iv: validIV,
+            chunkSize: partSize
+        ) { error, status in
+            encryptError = error
+            expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: 5.0)
+        XCTAssertEqual(encryptError, RnCryptoError.badInput)
+    }
+
+    func testZeroChunkSize() {
+        let testData = Array(repeating: UInt8(1), count: 100)
+        let partSize = 0
+        
+        let inputStream = InputStream(data: Data(testData))
+        let outputStreams = [OutputStream(toMemory: ())]
+        
+        inputStream.open()
+        outputStreams.forEach { $0.open() }
+        
+        let expectation = XCTestExpectation(description: "Zero chunk size")
+        var encryptError: RnCryptoError?
+        
+        sut.encryptToChunks(
+            input: inputStream,
+            outputs: outputStreams,
+            key: validKey,
+            iv: validIV,
+            chunkSize: partSize
+        ) { error, status in
+            encryptError = error
+            expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: 5.0)
+        XCTAssertEqual(encryptError, RnCryptoError.badInput)
+    }
+
+   
+  func testStreamReadError() {
+      // mock to simulate reading error
+      class MockInputStream: InputStream {
+          override func read(_ buffer: UnsafeMutablePointer<UInt8>, maxLength len: Int) -> Int {
+              return -1 // simulates read error
+          }
+          
+          override var streamError: Error? {
+              return NSError(domain: "", code: -1, userInfo: nil)
+          }
+          
+          override var hasBytesAvailable: Bool {
+              return true
+          }
+          
+          override func open() {}
+          
+          override func close() {}
+      }
+      
+      let inputStream = MockInputStream()
+      let outputStreams = [OutputStream(toMemory: ())]
+      
+      inputStream.open()
+      outputStreams.forEach { $0.open() }
+      
+      let expectation = XCTestExpectation(description: "Read error")
+      var encryptError: RnCryptoError?
+      
+      sut.encryptToChunks(
+          input: inputStream,
+          outputs: outputStreams,
+          key: validKey,
+          iv: validIV,
+          chunkSize: 100
+      ) { error, status in
+          encryptError = error
+          expectation.fulfill()
+      }
+      
+      wait(for: [expectation], timeout: 5.0)
+      XCTAssertEqual(encryptError, RnCryptoError.readFailed)
+  }
+
+    func testChunkSizeIntegerOverflow() {
+        let testData = Array(repeating: UInt8(1), count: 100)
+        let partSize = Int.max
+        
+        let inputStream = InputStream(data: Data(testData))
+        let outputStreams = [OutputStream(toMemory: ())]
+        
+        inputStream.open()
+        outputStreams.forEach { $0.open() }
+        
+        let expectation = XCTestExpectation(description: "Integer overflow")
+        var encryptError: RnCryptoError?
+        
+        sut.encryptToChunks(
+            input: inputStream,
+            outputs: outputStreams,
+            key: validKey,
+            iv: validIV,
+            chunkSize: partSize
+        ) { error, status in
+            encryptError = error
+            expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: 5.0)
+        XCTAssertEqual(encryptError, RnCryptoError.badInput)
+    }
 }
