@@ -260,13 +260,11 @@ public class RnCryptoModule extends ReactContextBaseJavaModule {
     Callback cb
   ) {
     try {
-      // Convert the ReadableArray to String array
       String[] paths = new String[destinationPaths.size()];
       for (int i = 0; i < destinationPaths.size(); i++) {
         paths[i] = destinationPaths.getString(i);
       }
 
-      // Convert hex strings to byte arrays
       byte[] key = Hex.decodeHex(hexKey);
       byte[] iv = Hex.decodeHex(hexIv);
 

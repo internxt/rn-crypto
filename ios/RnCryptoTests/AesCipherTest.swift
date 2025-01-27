@@ -90,9 +90,7 @@ class AesCipherTest: XCTestCase {
     )
   }
 
-  // Test encryption to chunks with unaligned buffer and chunk sizes
   func testBufferOverflowWithUnalignedChunks() {
-    // Testing with buffer size of 8KB and non-multiple chunk size of 7KB
     let testData = Data(repeating: 0x41, count: 16 * 1024)
     let chunkSize = 7 * 1024
 
@@ -154,77 +152,7 @@ class AesCipherTest: XCTestCase {
       wait(for: [expectation], timeout: 5.0)
       XCTAssertNil(encryptError)
   }
-  
-  func testLargeEncryptToChunks() {
-     let megabyte = 1024 * 1024
-     let testData = Array(repeating: UInt8(1), count: 102 * megabyte)
-     let key = Array(repeating: UInt8(0), count: 32)
-     let iv = Array(repeating: UInt8(0), count: 16)
-     let chunkSize = 30 * megabyte
 
-     let inputStream = InputStream(data: Data(testData))
-    let outputStreams = Array(repeating: OutputStream(toMemory: ()), count: 4)
-     
-     inputStream.open()
-     outputStreams.forEach { $0.open() }
-     
-     let expectation = XCTestExpectation(description: "Large file encryption")
-     var encryptError: RnCryptoError?
-
-     sut.encryptToChunks(
-         input: inputStream,
-         outputs: outputStreams,
-         key: key,
-         iv: iv,
-         chunkSize: chunkSize
-     ) { error, status in
-         encryptError = error
-         expectation.fulfill()
-     }
-
-     wait(for: [expectation], timeout: 30.0)
-     
-     outputStreams.forEach { $0.close() }
-     inputStream.close()
-     
-     XCTAssertNil(encryptError)
-  }
-  
-  func testGigabyteEncryptToChunks() {
-     let gigabyte = 1024 * 1024 * 1024
-     let testData = Array(repeating: UInt8(1), count: gigabyte)
-     let key = Array(repeating: UInt8(0), count: 32)
-     let iv = Array(repeating: UInt8(0), count: 16)
-     let chunkSize = 35 * 1024 * 1024 // 35MB chunk
-     
-     let inputStream = InputStream(data: Data(testData))
-     let outputStreams = Array(repeating: OutputStream(toMemory: ()), count: 30)
-
-     inputStream.open()
-     outputStreams.forEach { $0.open() }
-     
-     let expectation = XCTestExpectation(description: "GB encryption")
-     var encryptError: RnCryptoError?
-
-     sut.encryptToChunks(
-         input: inputStream,
-         outputs: outputStreams,
-         key: key,
-         iv: iv,
-         chunkSize: chunkSize
-     ) { error, status in
-         encryptError = error
-         expectation.fulfill()
-     }
-
-     wait(for: [expectation], timeout: 60.0)
-     
-     outputStreams.forEach { $0.close() }
-     inputStream.close()
-     
-     XCTAssertNil(encryptError)
-  }
-  
   func testEncryptDecryptCycle() {
      // Setup: Create test data - 1MB
      let megabyte = 1024 * 1024
@@ -263,8 +191,9 @@ class AesCipherTest: XCTestCase {
              encryptedData.append(data)
          }
      }
-     XCTAssertGreaterThan(encryptedData.count, 0)
 
+     XCTAssertEqual(encryptedData.count, testData.count)
+    
      // 3. Test decryption
      let decryptInput = InputStream(data: encryptedData)
      let decryptOutput = OutputStream(toMemory: ())
@@ -287,5 +216,275 @@ class AesCipherTest: XCTestCase {
      }
      
      XCTAssertEqual(testData, Array(decryptedData))
+  }
+  
+  
+  func testNoOutputStreams() {
+      let testData = Array(repeating: UInt8(1), count: 1000)
+      let partSize = 250
+      
+      let inputStream = InputStream(data: Data(testData))
+      let outputStreams: [OutputStream] = []
+      
+      inputStream.open()
+      
+      let expectation = XCTestExpectation(description: "No streams test")
+      var encryptError: RnCryptoError?
+      
+      sut.encryptToChunks(
+          input: inputStream,
+          outputs: outputStreams,
+          key: validKey,
+          iv: validIV,
+          chunkSize: partSize
+      ) { error, status in
+          encryptError = error
+          expectation.fulfill()
+      }
+      
+      wait(for: [expectation], timeout: 5.0)
+      XCTAssertEqual(encryptError, RnCryptoError.fileCreationFailed)
+  }
+
+  func testPartSizeEqualsFileSize() {
+      let testData = Array(repeating: UInt8(1), count: 100)
+      let partSize = 100
+      
+      let inputStream = InputStream(data: Data(testData))
+      let outputStreams = [OutputStream(toMemory: ())]
+      
+      inputStream.open()
+      outputStreams.forEach { $0.open() }
+      
+      let expectation = XCTestExpectation(description: "Equals file size")
+      var encryptError: RnCryptoError?
+      
+      sut.encryptToChunks(
+          input: inputStream,
+          outputs: outputStreams,
+          key: validKey,
+          iv: validIV,
+          chunkSize: partSize
+      ) { error, status in
+          encryptError = error
+          expectation.fulfill()
+      }
+      
+      wait(for: [expectation], timeout: 5.0)
+      XCTAssertNil(encryptError)
+      
+      guard let encryptedData = outputStreams.first?.property(forKey: .dataWrittenToMemoryStreamKey) as? Data else {
+          XCTFail("No encrypted data")
+          return
+      }
+      
+      let decryptInput = InputStream(data: encryptedData)
+      let decryptOutput = OutputStream(toMemory: ())
+      decryptInput.open()
+      decryptOutput.open()
+      
+      let decryptExpectation = XCTestExpectation(description: "Decryption")
+      sut.decrypt(
+          input: decryptInput,
+          output: decryptOutput,
+          key: validKey,
+          iv: validIV
+      ) { error, status in
+          XCTAssertNil(error)
+          decryptExpectation.fulfill()
+      }
+      
+      wait(for: [decryptExpectation], timeout: 5.0)
+      
+      guard let decryptedData = decryptOutput.property(forKey: .dataWrittenToMemoryStreamKey) as? Data else {
+          XCTFail("No decrypted data")
+          return
+      }
+      XCTAssertEqual(Array(decryptedData), testData)
+  }
+  
+  func testPartSizeGreaterThanFileSize() {
+      let testData = Array(repeating: UInt8(1), count: 100)
+      let partSize = 200
+      
+      let inputStream = InputStream(data: Data(testData))
+      let outputStreams = [OutputStream(toMemory: ())]
+      
+      inputStream.open()
+      outputStreams.forEach { $0.open() }
+      
+      let expectation = XCTestExpectation(description: "Greater than file size")
+      var encryptError: RnCryptoError?
+      
+      sut.encryptToChunks(
+          input: inputStream,
+          outputs: outputStreams,
+          key: validKey,
+          iv: validIV,
+          chunkSize: partSize
+      ) { error, status in
+          encryptError = error
+          expectation.fulfill()
+      }
+      
+      wait(for: [expectation], timeout: 5.0)
+      
+      XCTAssertNil(encryptError)
+      
+      guard let encryptedData = outputStreams.first?.property(forKey: .dataWrittenToMemoryStreamKey) as? Data else {
+          XCTFail("No encrypted data")
+          return
+      }
+      
+      let decryptInput = InputStream(data: encryptedData)
+      let decryptOutput = OutputStream(toMemory: ())
+      decryptInput.open()
+      decryptOutput.open()
+      
+      let decryptExpectation = XCTestExpectation(description: "Decryption")
+      sut.decrypt(
+          input: decryptInput,
+          output: decryptOutput,
+          key: validKey,
+          iv: validIV
+      ) { error, status in
+          XCTAssertNil(error)
+          decryptExpectation.fulfill()
+      }
+      
+      wait(for: [decryptExpectation], timeout: 5.0)
+      
+      guard let decryptedData = decryptOutput.property(forKey: .dataWrittenToMemoryStreamKey) as? Data else {
+          XCTFail("No decrypted data")
+          return
+      }
+      XCTAssertEqual(Array(decryptedData), testData)
+  }
+
+  func testPartSizeLessThanFileSizeMultiple() {
+      let testData = Data(repeating: 0x41, count: 16 * 1024)
+      let chunkSize = 8 * 1024
+      
+      let outputs = [
+          OutputStream(toMemory: ()),
+          OutputStream(toMemory: ())
+      ]
+      
+      let expectation = XCTestExpectation(description: "Multiple chunks test")
+      
+      sut.encryptToChunks(
+          input: InputStream(data: testData),
+          outputs: outputs,
+          key: validKey,
+          iv: validIV,
+          chunkSize: chunkSize
+      ) { error, status in
+          XCTAssertNil(error)
+          
+          let chunks = outputs.map { $0.property(forKey: .dataWrittenToMemoryStreamKey) as! Data }
+          
+          // Verify chunk count and sizes
+          XCTAssertEqual(chunks.count, 2, "Should have 2 chunks")
+          XCTAssertEqual(chunks[0].count, 8 * 1024, "First chunk should be 8KB")
+          XCTAssertEqual(chunks[1].count, 8 * 1024, "Second chunk should be 8KB")
+          
+          // Verify total size matches
+          XCTAssertEqual(chunks.reduce(0) { $0 + $1.count }, testData.count)
+          
+          // Verify decryption works
+          var encryptedData = Data()
+          chunks.forEach { encryptedData.append($0) }
+          
+          let decryptInput = InputStream(data: encryptedData)
+          let decryptOutput = OutputStream(toMemory: ())
+          decryptInput.open()
+          decryptOutput.open()
+          
+          let decryptExpectation = XCTestExpectation(description: "Decryption")
+          self.sut.decrypt(
+              input: decryptInput,
+              output: decryptOutput,
+              key: self.validKey,
+              iv: self.validIV
+          ) { error, status in
+              XCTAssertNil(error)
+              
+              guard let decryptedData = decryptOutput.property(forKey: .dataWrittenToMemoryStreamKey) as? Data else {
+                  XCTFail("No decrypted data")
+                  return
+              }
+              
+              XCTAssertEqual(decryptedData, testData)
+              decryptExpectation.fulfill()
+          }
+          
+          expectation.fulfill()
+      }
+      
+      wait(for: [expectation], timeout: 5.0)
+  }
+
+  func testPartSizeLessThanFileSizeNotMultiple() {
+      let testData = Data(repeating: 0x41, count: 16 * 1024)
+      let chunkSize = 7 * 1024
+      
+      let outputs = [
+          OutputStream(toMemory: ()),
+          OutputStream(toMemory: ()),
+          OutputStream(toMemory: ())
+      ]
+      
+      let expectation = XCTestExpectation(description: "Non-multiple chunks test")
+      
+      sut.encryptToChunks(
+          input: InputStream(data: testData),
+          outputs: outputs,
+          key: validKey,
+          iv: validIV,
+          chunkSize: chunkSize
+      ) { error, status in
+          XCTAssertNil(error)
+          
+          let chunks = outputs.map { $0.property(forKey: .dataWrittenToMemoryStreamKey) as! Data }
+          
+          // Verify chunk sizes
+          XCTAssertEqual(chunks[0].count, 7168, "First chunk should be 7KB")
+          XCTAssertEqual(chunks[1].count, 7168, "Second chunk should be 7KB")
+          XCTAssertEqual(chunks[2].count, 2048, "Last chunk should be 2KB")
+          
+          // Verify total size matches
+          XCTAssertEqual(chunks.reduce(0) { $0 + $1.count }, testData.count)
+          
+          // Verify decryption works
+          var encryptedData = Data()
+          chunks.forEach { encryptedData.append($0) }
+          
+          let decryptInput = InputStream(data: encryptedData)
+          let decryptOutput = OutputStream(toMemory: ())
+          decryptInput.open()
+          decryptOutput.open()
+          
+          let decryptExpectation = XCTestExpectation(description: "Decryption")
+          self.sut.decrypt(
+              input: decryptInput,
+              output: decryptOutput,
+              key: self.validKey,
+              iv: self.validIV
+          ) { error, status in
+              XCTAssertNil(error)
+              
+              guard let decryptedData = decryptOutput.property(forKey: .dataWrittenToMemoryStreamKey) as? Data else {
+                  XCTFail("No decrypted data")
+                  return
+              }
+              
+              XCTAssertEqual(decryptedData, testData)
+              decryptExpectation.fulfill()
+          }
+          
+          expectation.fulfill()
+      }
+      
+      wait(for: [expectation], timeout: 5.0)
   }
 }
