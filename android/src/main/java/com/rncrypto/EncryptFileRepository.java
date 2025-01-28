@@ -166,8 +166,21 @@ public class EncryptFileRepository {
         "Chunk size must be greater than zero."
       );
     }
+
+    // Overflow check
+    int bufferSize = 4096;
+    if (chunkSize >= Integer.MAX_VALUE - bufferSize) {
+      throw new IllegalArgumentException(
+        "Chunk size too large, could cause overflow."
+      );
+    }
+
     if (outputs == null || outputs.length == 0) {
       throw new IllegalArgumentException("Outputs array cannot be empty.");
+    }
+
+    if (inputStream == null) {
+      throw new IllegalArgumentException("Input stream cannot be null.");
     }
 
     byte[] buffer = new byte[4096];
@@ -177,25 +190,21 @@ public class EncryptFileRepository {
 
     try {
       int bytesRead;
+      while (true) {
+        bytesRead = inputStream.read(buffer);
+        if (bytesRead == -1) {
+          break; // EOF
+        }
+        if (bytesRead < 0) {
+          throw new IOException("Error reading from input stream");
+        }
 
-      while ((bytesRead = inputStream.read(buffer)) != -1) {
         int remaining = bytesRead;
         int offset = 0;
 
         while (remaining > 0) {
           int spaceLeftInChunk = chunkSize - bytesWrittenInChunk;
-          int bytesToWrite = Math.min(remaining, spaceLeftInChunk);
-
-          byte[] encryptedData = cipher.update(buffer, offset, bytesToWrite);
-          if (encryptedData != null) {
-            currentOutput.write(encryptedData);
-          }
-
-          remaining -= bytesToWrite;
-          offset += bytesToWrite;
-          bytesWrittenInChunk += bytesToWrite;
-
-          if (bytesWrittenInChunk >= chunkSize && remaining > 0) {
+          if (spaceLeftInChunk <= 0) {
             byte[] finalBlock = cipher.update(new byte[0]);
             if (finalBlock != null) {
               currentOutput.write(finalBlock);
@@ -212,30 +221,58 @@ public class EncryptFileRepository {
 
             currentOutput = outputs[currentChunkIndex];
             bytesWrittenInChunk = 0;
+            spaceLeftInChunk = chunkSize;
           }
+
+          int bytesToWrite = Math.min(remaining, spaceLeftInChunk);
+
+          byte[] encryptedData = cipher.update(buffer, offset, bytesToWrite);
+          if (encryptedData != null) {
+            try {
+              currentOutput.write(encryptedData);
+            } catch (IOException e) {
+              throw new IOException(
+                "Error writing to output stream " + currentChunkIndex,
+                e
+              );
+            }
+          }
+
+          remaining -= bytesToWrite;
+          offset += bytesToWrite;
+          bytesWrittenInChunk += bytesToWrite;
         }
       }
 
+      // Final block
       byte[] finalBlock = cipher.doFinal();
       if (finalBlock != null) {
         currentOutput.write(finalBlock);
       }
       currentOutput.flush();
+    } catch (IOException | IllegalBlockSizeException | BadPaddingException e) {
+      closeAllStreams(outputs, currentChunkIndex);
+      throw e;
     } finally {
-      for (int i = currentChunkIndex; i < outputs.length; i++) {
-        try {
-          outputs[i].close();
-        } catch (IOException e) {
-          System.err.println(
-            "Error closing output stream " + i + ": " + e.getMessage()
-          );
-        }
-      }
-
+      closeAllStreams(outputs, currentChunkIndex);
       try {
         inputStream.close();
       } catch (IOException e) {
         System.err.println("Error closing input stream: " + e.getMessage());
+      }
+    }
+  }
+
+  private void closeAllStreams(OutputStream[] outputs, int currentIndex) {
+    for (int i = currentIndex; i < outputs.length; i++) {
+      try {
+        if (outputs[i] != null) {
+          outputs[i].close();
+        }
+      } catch (IOException e) {
+        System.err.println(
+          "Error closing output stream " + i + ": " + e.getMessage()
+        );
       }
     }
   }
