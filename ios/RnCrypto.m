@@ -42,7 +42,13 @@ RCT_EXTERN_METHOD(joinFiles:
                   (NSArray*)inputFiles
                   outputFile:(NSString*)outputFile
                   callback:(RCTResponseSenderBlock)callback)
-
+RCT_EXTERN_METHOD(encryptFileToChunks:
+                  (NSString*)plainFilePath
+                  destinationPaths:(NSArray*)destinationPaths
+                  hexKey:(NSString*)hexKey
+                  hexIv:(NSString*)hexIv
+                  chunkSize:(nonnull NSNumber*)chunkSize
+                  callback:(RCTResponseSenderBlock)callback)
 
 + (BOOL)requiresMainQueueSetup
 {

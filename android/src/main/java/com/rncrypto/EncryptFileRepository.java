@@ -1,7 +1,6 @@
 package com.rncrypto;
 
 import com.rncrypto.util.OnlyErrorCallback;
-
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -11,14 +10,16 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.Executor;
-
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.CipherOutputStream;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 public class EncryptFileRepository {
+
   private final Executor executor;
 
   public EncryptFileRepository(Executor executor) {
@@ -32,7 +33,9 @@ public class EncryptFileRepository {
     byte[] iv,
     final OnlyErrorCallback callback
   ) {
-    executor.execute(() -> encryptFile(sourcePath, destinationPath, key, iv, callback));
+    executor.execute(() ->
+      encryptFile(sourcePath, destinationPath, key, iv, callback)
+    );
   }
 
   public void encryptFile(
@@ -43,10 +46,20 @@ public class EncryptFileRepository {
     final OnlyErrorCallback onlyErrorCallback
   ) {
     try {
-      this.encryptFile(sourcePath, destinationPath, this.getAES256CTRCipher(key, iv));
+      this.encryptFile(
+          sourcePath,
+          destinationPath,
+          this.getAES256CTRCipher(key, iv)
+        );
 
       onlyErrorCallback.onComplete(null);
-    } catch (IOException | NoSuchPaddingException | InvalidAlgorithmParameterException | NoSuchAlgorithmException | InvalidKeyException e) {
+    } catch (
+      IOException
+      | NoSuchPaddingException
+      | InvalidAlgorithmParameterException
+      | NoSuchAlgorithmException
+      | InvalidKeyException e
+    ) {
       e.printStackTrace();
       onlyErrorCallback.onComplete(e);
     }
@@ -59,12 +72,16 @@ public class EncryptFileRepository {
    * @param iv Initialization vector
    * @return Cipher used for encrypting with AES-256-CTR
    */
-  private Cipher getAES256CTRCipher(byte[] key, byte[] iv) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException {
+  private Cipher getAES256CTRCipher(byte[] key, byte[] iv)
+    throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException {
     SecretKeySpec secretKey = new SecretKeySpec(key, 0, key.length, "AES");
     Cipher cipher = Cipher.getInstance("AES/CTR/NoPadding");
 
-    if (!cipher.getAlgorithm().toUpperCase().startsWith(("AES/CTR")))
-      throw new IllegalArgumentException("Invalid algorithm, only AES/CTR mode supported");
+    if (
+      !cipher.getAlgorithm().toUpperCase().startsWith(("AES/CTR"))
+    ) throw new IllegalArgumentException(
+      "Invalid algorithm, only AES/CTR mode supported"
+    );
 
     cipher.init(Cipher.ENCRYPT_MODE, secretKey, new IvParameterSpec(iv));
 
@@ -84,10 +101,10 @@ public class EncryptFileRepository {
     Cipher cipher
   ) throws IOException {
     this.encrypt(
-      new FileInputStream(sourcePath),
-      new FileOutputStream(destinationPath),
-      cipher
-    );
+        new FileInputStream(sourcePath),
+        new FileOutputStream(destinationPath),
+        cipher
+      );
   }
 
   /**
@@ -114,5 +131,149 @@ public class EncryptFileRepository {
     cos.flush();
     cos.close();
     inputStream.close();
+  }
+
+  public void encryptFileToChunks(
+    String sourcePath,
+    String[] destinationPaths,
+    byte[] key,
+    byte[] iv,
+    int chunkSize,
+    final OnlyErrorCallback callback
+  ) {
+    try (FileInputStream input = new FileInputStream(sourcePath)) {
+      OutputStream[] outputs = new OutputStream[destinationPaths.length];
+
+      for (int i = 0; i < destinationPaths.length; i++) {
+        outputs[i] = new FileOutputStream(destinationPaths[i]);
+      }
+      Cipher cipher = getAES256CTRCipher(key, iv);
+      encryptToMultipleChunks(input, outputs, cipher, chunkSize);
+      callback.onComplete(null);
+    } catch (Exception e) {
+      callback.onComplete(e);
+    }
+  }
+
+  public void encryptToMultipleChunks(
+    InputStream inputStream,
+    OutputStream[] outputs,
+    Cipher cipher,
+    int chunkSize
+  ) throws IOException, BadPaddingException, IllegalBlockSizeException {
+    if (chunkSize <= 0) {
+      throw new IllegalArgumentException(
+        "Chunk size must be greater than zero."
+      );
+    }
+
+    // Overflow check
+    int bufferSize = 4096;
+    if (chunkSize >= Integer.MAX_VALUE - bufferSize) {
+      throw new IllegalArgumentException(
+        "Chunk size too large, could cause overflow."
+      );
+    }
+
+    if (outputs == null || outputs.length == 0) {
+      throw new IllegalArgumentException("Outputs array cannot be empty.");
+    }
+
+    if (inputStream == null) {
+      throw new IllegalArgumentException("Input stream cannot be null.");
+    }
+
+    byte[] buffer = new byte[4096];
+    int currentChunkIndex = 0;
+    int bytesWrittenInChunk = 0;
+    OutputStream currentOutput = outputs[currentChunkIndex];
+
+    try {
+      int bytesRead;
+      while (true) {
+        bytesRead = inputStream.read(buffer);
+        if (bytesRead == -1) {
+          break; // EOF
+        }
+        if (bytesRead < 0) {
+          throw new IOException("Error reading from input stream");
+        }
+
+        int remaining = bytesRead;
+        int offset = 0;
+
+        while (remaining > 0) {
+          int spaceLeftInChunk = chunkSize - bytesWrittenInChunk;
+          if (spaceLeftInChunk <= 0) {
+            byte[] finalBlock = cipher.update(new byte[0]);
+            if (finalBlock != null) {
+              currentOutput.write(finalBlock);
+            }
+            currentOutput.flush();
+            currentOutput.close();
+
+            currentChunkIndex++;
+            if (currentChunkIndex >= outputs.length) {
+              throw new IOException(
+                "Not enough output streams for the file size"
+              );
+            }
+
+            currentOutput = outputs[currentChunkIndex];
+            bytesWrittenInChunk = 0;
+            spaceLeftInChunk = chunkSize;
+          }
+
+          int bytesToWrite = Math.min(remaining, spaceLeftInChunk);
+
+          byte[] encryptedData = cipher.update(buffer, offset, bytesToWrite);
+          if (encryptedData != null) {
+            try {
+              currentOutput.write(encryptedData);
+            } catch (IOException e) {
+              throw new IOException(
+                "Error writing to output stream " + currentChunkIndex,
+                e
+              );
+            }
+          }
+
+          remaining -= bytesToWrite;
+          offset += bytesToWrite;
+          bytesWrittenInChunk += bytesToWrite;
+        }
+      }
+
+      // Final block
+      byte[] finalBlock = cipher.doFinal();
+      if (finalBlock != null) {
+        currentOutput.write(finalBlock);
+      }
+      currentOutput.flush();
+    } catch (IOException | IllegalBlockSizeException | BadPaddingException e) {
+      closeAllStreams(outputs, currentChunkIndex);
+      throw e;
+    } finally {
+      closeAllStreams(outputs, currentChunkIndex);
+      try {
+        inputStream.close();
+      } catch (IOException e) {
+        System.err.println("Error closing input stream: " + e.getMessage());
+      }
+    }
+  }
+
+  private void closeAllStreams(OutputStream[] outputs, int currentIndex) {
+    for (int i = currentIndex; i < outputs.length; i++) {
+      try {
+        if (outputs[i] != null) {
+          outputs[i].close();
+        }
+      } catch (IOException e) {
+        System.err.println(
+          "Error closing output stream " + i + ": " + e.getMessage()
+        );
+      }
+    }
   }
 }

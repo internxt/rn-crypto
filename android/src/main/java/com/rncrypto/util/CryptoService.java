@@ -4,29 +4,31 @@ import com.facebook.common.util.Hex;
 import com.rncrypto.DecryptFileRepository;
 import com.rncrypto.EncryptFileRepository;
 import com.rncrypto.ThreadPerTaskExecutor;
-
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.sql.Array;
 import java.util.List;
-
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
 public class CryptoService {
+
   private static CryptoService instance = null;
   private final EncryptFileRepository encryptFileRepository;
   private final DecryptFileRepository decryptFileRepository;
 
-  public CryptoService(EncryptFileRepository encryptFileRepository, DecryptFileRepository decryptFileRepository) {
+  public CryptoService(
+    EncryptFileRepository encryptFileRepository,
+    DecryptFileRepository decryptFileRepository
+  ) {
     this.decryptFileRepository = decryptFileRepository;
     this.encryptFileRepository = encryptFileRepository;
   }
 
-  private synchronized static void createInstance() {
+  private static synchronized void createInstance() {
     if (instance == null) {
       instance = new CryptoService(
         new EncryptFileRepository(new ThreadPerTaskExecutor()),
@@ -72,20 +74,20 @@ public class CryptoService {
 
     if (runInBackground) {
       this.encryptFileRepository.encryptFileInBackground(
-        sourcePath,
-        destinationPath,
-        key,
-        iv,
-        onlyErrorCallback
-      );
+          sourcePath,
+          destinationPath,
+          key,
+          iv,
+          onlyErrorCallback
+        );
     } else {
       this.encryptFileRepository.encryptFile(
-        sourcePath,
-        destinationPath,
-        key,
-        iv,
-        onlyErrorCallback
-      );
+          sourcePath,
+          destinationPath,
+          key,
+          iv,
+          onlyErrorCallback
+        );
     }
   }
 
@@ -102,41 +104,79 @@ public class CryptoService {
 
     if (runInBackground) {
       this.decryptFileRepository.decryptFileInBackground(
-        sourcePath,
-        destinationPath,
-        key,
-        iv,
-        onlyErrorCallback
-      );
+          sourcePath,
+          destinationPath,
+          key,
+          iv,
+          onlyErrorCallback
+        );
     } else {
       this.decryptFileRepository.decryptFile(
-        sourcePath,
-        destinationPath,
-        key,
-        iv,
-        onlyErrorCallback
-      );
+          sourcePath,
+          destinationPath,
+          key,
+          iv,
+          onlyErrorCallback
+        );
     }
   }
 
-
-  public byte[] pbkdf2(String password, byte[] salt, int rounds, int derivedKeyLength) throws NoSuchAlgorithmException, InvalidKeySpecException {
-    PBEKeySpec spec = new PBEKeySpec(password.toCharArray(), salt, rounds,
-      derivedKeyLength * 8);
-    SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512");
+  public byte[] pbkdf2(
+    String password,
+    byte[] salt,
+    int rounds,
+    int derivedKeyLength
+  ) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    PBEKeySpec spec = new PBEKeySpec(
+      password.toCharArray(),
+      salt,
+      rounds,
+      derivedKeyLength * 8
+    );
+    SecretKeyFactory factory = SecretKeyFactory.getInstance(
+      "PBKDF2WithHmacSHA512"
+    );
     SecretKey key = factory.generateSecret(spec);
     return key.getEncoded();
   }
 
+  /**
+   * Encrypts a file into chunks
+   *
+   * @param sourcePath Source file path
+   * @param destinationPaths Array of destination paths for chunks
+   * @param key Encryption key
+   * @param iv Initialization vector
+   * @param chunkSize Size of each chunk in bytes
+   * @param runInBackground Whether to run in background
+   * @param onlyErrorCallback Callback for handling errors
+   */
+  public void encryptFileToChunks(
+    String sourcePath,
+    String[] destinationPaths,
+    byte[] key,
+    byte[] iv,
+    int chunkSize,
+    boolean runInBackground,
+    OnlyErrorCallback onlyErrorCallback
+  ) {
+    this.encryptFileRepository.encryptFileToChunks(
+        sourcePath,
+        destinationPaths,
+        key,
+        iv,
+        chunkSize,
+        onlyErrorCallback
+      );
+  }
 
   public byte[] sha512(List<byte[]> inputs) throws NoSuchAlgorithmException {
     MessageDigest md = MessageDigest.getInstance("SHA-512");
 
-    for(byte[] input: inputs) {
+    for (byte[] input : inputs) {
       md.update(input);
     }
 
     return md.digest();
-
   }
 }

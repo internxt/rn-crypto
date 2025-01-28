@@ -1,9 +1,7 @@
 package com.rncrypto;
 
 import android.os.Environment;
-
 import androidx.annotation.NonNull;
-
 import com.facebook.common.util.Hex;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
@@ -16,20 +14,20 @@ import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.module.annotations.ReactModule;
 import com.rncrypto.util.CryptoService;
-
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 @ReactModule(name = RnCryptoModule.NAME)
 public class RnCryptoModule extends ReactContextBaseJavaModule {
+
   public static final String NAME = "RnCrypto";
 
   public RnCryptoModule(ReactApplicationContext reactContext) {
@@ -44,12 +42,18 @@ public class RnCryptoModule extends ReactContextBaseJavaModule {
 
   @ReactMethod
   public void getDocumentsPath(Promise promise) {
-    promise.resolve(this.getReactApplicationContext().getFilesDir().getAbsolutePath());
+    promise.resolve(
+      this.getReactApplicationContext().getFilesDir().getAbsolutePath()
+    );
   }
 
   @ReactMethod
   public void getDownloadsPath(Promise promise) {
-    promise.resolve(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath());
+    promise.resolve(
+      Environment.getExternalStoragePublicDirectory(
+        Environment.DIRECTORY_DOWNLOADS
+      ).getAbsolutePath()
+    );
   }
 
   @ReactMethod
@@ -106,20 +110,21 @@ public class RnCryptoModule extends ReactContextBaseJavaModule {
     String hexIv,
     Callback cb
   ) {
-    CryptoService.getInstance().encryptFile(
-      sourcePath,
-      destinationPath,
-      hexKey,
-      hexIv,
-      true,
-      (Exception ex) -> {
-        if (ex == null) {
-          cb.invoke((Object) null);
-        } else {
-          cb.invoke(ex);
+    CryptoService.getInstance()
+      .encryptFile(
+        sourcePath,
+        destinationPath,
+        hexKey,
+        hexIv,
+        true,
+        (Exception ex) -> {
+          if (ex == null) {
+            cb.invoke((Object) null);
+          } else {
+            cb.invoke(ex);
+          }
         }
-      }
-    );
+      );
   }
 
   /**
@@ -139,64 +144,66 @@ public class RnCryptoModule extends ReactContextBaseJavaModule {
     String hexIv,
     Callback cb
   ) {
-    CryptoService.getInstance().decryptFile(
-      sourcePath,
-      destinationPath,
-      hexKey,
-      hexIv,
-      true,
-      (Exception ex) -> {
-        if (ex == null) {
-          cb.invoke((Object) null);
-        } else {
-          cb.invoke(ex);
+    CryptoService.getInstance()
+      .decryptFile(
+        sourcePath,
+        destinationPath,
+        hexKey,
+        hexIv,
+        true,
+        (Exception ex) -> {
+          if (ex == null) {
+            cb.invoke((Object) null);
+          } else {
+            cb.invoke(ex);
+          }
         }
-      }
-    );
+      );
   }
 
- @ReactMethod
-  public void joinFiles(ReadableArray inputFiles, String outputFile, Callback cb) {
+  @ReactMethod
+  public void joinFiles(
+    ReadableArray inputFiles,
+    String outputFile,
+    Callback cb
+  ) {
     FileOutputStream outputStream = null;
     try {
       outputStream = new FileOutputStream(outputFile, true);
       for (int i = 0; i < inputFiles.size(); i++) {
-          String inputFile = inputFiles.getString(i);
-          FileInputStream inputStream = null;
-          try {
-              inputStream = new FileInputStream(inputFile);
-              byte[] buffer = new byte[8192];
-              int bytesRead;
-              while ((bytesRead = inputStream.read(buffer)) != -1) {
-                  outputStream.write(buffer, 0, bytesRead);
-              }
-          } finally {
-              if (inputStream != null) {
-                  inputStream.close();
-              }
-
-              try {
-                  new File(inputFile).delete();
-              } catch (Exception e) {
-              }
+        String inputFile = inputFiles.getString(i);
+        FileInputStream inputStream = null;
+        try {
+          inputStream = new FileInputStream(inputFile);
+          byte[] buffer = new byte[8192];
+          int bytesRead;
+          while ((bytesRead = inputStream.read(buffer)) != -1) {
+            outputStream.write(buffer, 0, bytesRead);
           }
+        } finally {
+          if (inputStream != null) {
+            inputStream.close();
+          }
+
+          try {
+            new File(inputFile).delete();
+          } catch (Exception e) {}
+        }
       }
       cb.invoke((Object) null);
     } catch (IOException e) {
-        cb.invoke(e.getMessage());
+      cb.invoke(e.getMessage());
     } finally {
-        try {
-            if (outputStream != null) outputStream.close();
-        } catch (IOException e) {
-          cb.invoke("Error closing output file: " + e.getMessage());
-        }
+      try {
+        if (outputStream != null) outputStream.close();
+      } catch (IOException e) {
+        cb.invoke("Error closing output file: " + e.getMessage());
+      }
     }
   }
 
   @ReactMethod
-  public void sha256() {
-
-  }
+  public void sha256() {}
 
   @ReactMethod
   public void sha512(ReadableArray inputs, Promise promise) {
@@ -207,17 +214,14 @@ public class RnCryptoModule extends ReactContextBaseJavaModule {
     }
 
     try {
-      byte[] result = CryptoService
-        .getInstance().sha512(byteInputs);
+      byte[] result = CryptoService.getInstance().sha512(byteInputs);
 
-      promise.resolve(Hex.encodeHex(result,false));
+      promise.resolve(Hex.encodeHex(result, false));
     } catch (NoSuchAlgorithmException e) {
       e.printStackTrace();
-      promise.reject("NO_ALGORITHM",e.getMessage());
+      promise.reject("NO_ALGORITHM", e.getMessage());
     }
-
   }
-
 
   @ReactMethod
   public void pbkdf2(
@@ -227,23 +231,61 @@ public class RnCryptoModule extends ReactContextBaseJavaModule {
     Double derivedKeyLength,
     Promise promise
   ) {
-
     try {
-      byte[] result = CryptoService
-        .getInstance()
-        .pbkdf2(password, salt.getBytes(),rounds.intValue(), derivedKeyLength.intValue());
-
+      byte[] result = CryptoService.getInstance()
+        .pbkdf2(
+          password,
+          salt.getBytes(),
+          rounds.intValue(),
+          derivedKeyLength.intValue()
+        );
 
       promise.resolve(Hex.encodeHex(result, false));
     } catch (NoSuchAlgorithmException e) {
       e.printStackTrace();
-      promise.reject("NO_ALGORITHM",e.getMessage());
-
+      promise.reject("NO_ALGORITHM", e.getMessage());
     } catch (InvalidKeySpecException e) {
       e.printStackTrace();
-      promise.reject("INVALID_KEY_SPEC",e.getMessage());
+      promise.reject("INVALID_KEY_SPEC", e.getMessage());
     }
-
   }
 
+  @ReactMethod
+  public void encryptFileToChunks(
+    String sourcePath,
+    ReadableArray destinationPaths,
+    String hexKey,
+    String hexIv,
+    Double chunkSize,
+    Callback cb
+  ) {
+    try {
+      String[] paths = new String[destinationPaths.size()];
+      for (int i = 0; i < destinationPaths.size(); i++) {
+        paths[i] = destinationPaths.getString(i);
+      }
+
+      byte[] key = Hex.decodeHex(hexKey);
+      byte[] iv = Hex.decodeHex(hexIv);
+
+      CryptoService.getInstance()
+        .encryptFileToChunks(
+          sourcePath,
+          paths,
+          key,
+          iv,
+          chunkSize.intValue(),
+          true,
+          (Exception ex) -> {
+            if (ex == null) {
+              cb.invoke((Object) null);
+            } else {
+              cb.invoke(ex);
+            }
+          }
+        );
+    } catch (Exception e) {
+      cb.invoke(e.getMessage());
+    }
+  }
 }
