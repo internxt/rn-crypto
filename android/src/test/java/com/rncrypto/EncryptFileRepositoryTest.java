@@ -20,6 +20,7 @@ import org.junit.rules.TemporaryFolder;
 public class EncryptFileRepositoryTest {
 
   private EncryptFileRepository repository;
+  private DecryptFileRepository decryptRepository;
   private byte[] validKey;
   private byte[] validIv;
   private static final int TIMEOUT_SECONDS = 5;
@@ -30,6 +31,7 @@ public class EncryptFileRepositoryTest {
   @Before
   public void setUp() {
     repository = new EncryptFileRepository(Runnable::run);
+    decryptRepository = new DecryptFileRepository(Runnable::run);
     validKey = new byte[32];
     validIv = new byte[16];
     Arrays.fill(validKey, (byte) 0);
@@ -282,7 +284,7 @@ public class EncryptFileRepositoryTest {
     CountDownLatch decryptLatch = new CountDownLatch(1);
     final Exception[] decryptError = new Exception[1];
 
-    repository.encryptFile(
+    decryptRepository.decryptFile(
       combinedEncrypted.getAbsolutePath(),
       decryptedFile.getAbsolutePath(),
       validKey,
